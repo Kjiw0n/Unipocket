@@ -1,5 +1,6 @@
 import '@/styles/index.css';
 
+import * as Sentry from '@sentry/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -15,6 +16,14 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { HTTP_STATUS } from '@/api/config/constants';
 import { ApiError } from '@/api/config/error';
 import { routeTree } from '@/routeTree.gen';
+
+Sentry.init({
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+  integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
+  tracesSampleRate: import.meta.env.PROD ? 1.0 : 0,
+  replaysOnErrorSampleRate: 1.0,
+  environment: import.meta.env.MODE,
+});
 
 const TOOLTIP_DELAY_DURATION = 300;
 
@@ -53,10 +62,12 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
-        <RouterProvider router={router} />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <Sentry.ErrorBoundary fallback={<p>오류가 발생했습니다. 잠시 후 다시 시도해주세요.</p>}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+          <RouterProvider router={router} />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </Sentry.ErrorBoundary>
   </StrictMode>,
 );

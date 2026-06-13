@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react-swc';
@@ -6,7 +7,7 @@ import { defineConfig, loadEnv } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
+  const env = loadEnv(mode, process.cwd(), '');
   // 호스트네임 추출 (예: https://api.unipocket.co.kr -> api.unipocket.co.kr)
   const targetUrl = new URL(env.VITE_API_PROXY_TARGET || 'http://localhost');
   const targetHostname = targetUrl.hostname;
@@ -27,7 +28,22 @@ export default defineConfig(({ mode }) => {
         },
         include: '**/*.svg',
       }),
+      ...(mode === 'production'
+        ? [
+            sentryVitePlugin({
+              authToken: env.SENTRY_AUTH_TOKEN,
+              org: env.SENTRY_ORG,
+              project: env.SENTRY_PROJECT,
+              sourcemaps: {
+                filesToDeleteAfterUpload: ['./dist/**/*.map'],
+              },
+            }),
+          ]
+        : []),
     ],
+    build: {
+      sourcemap: mode === 'production',
+    },
     resolve: {
       alias: [{ find: '@', replacement: '/src' }],
     },
