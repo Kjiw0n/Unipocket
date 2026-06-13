@@ -54,11 +54,23 @@ const router = createRouter({
   },
 });
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
 }
+
+router.subscribe('onResolved', ({ toLocation }) => {
+  window.gtag?.('event', 'page_view', {
+    page_path: toLocation.pathname,
+  });
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
