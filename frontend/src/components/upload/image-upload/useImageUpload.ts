@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import * as Sentry from '@sentry/react';
 import { toast } from 'sonner';
 
 import { UPLOAD_STATUS, type UploadItem } from '@/components/upload/type';
@@ -79,7 +80,8 @@ export const useImageUpload = (accountBookId: number) => {
             item.id === id ? { ...item, status: UPLOAD_STATUS.UPLOADED } : item,
           ),
         );
-      } catch {
+      } catch (error) {
+        Sentry.captureException(error);
         setItems((prev) =>
           prev.map((item) =>
             item.id === id ? { ...item, status: UPLOAD_STATUS.ERROR } : item,
@@ -142,7 +144,8 @@ export const useImageUpload = (accountBookId: number) => {
           ),
       });
       return true;
-    } catch {
+    } catch (error) {
+      Sentry.captureException(error);
       toast.error('파일 분석 요청에 실패했어요.');
       return false;
     }

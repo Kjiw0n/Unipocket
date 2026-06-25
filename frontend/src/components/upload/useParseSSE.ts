@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import * as Sentry from '@sentry/react';
 import { toast } from 'sonner';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -130,10 +131,9 @@ export const useParseSSE = (accountBookId: number) => {
       try {
         const parsed = JSON.parse((event as MessageEvent).data);
         handleProgressValue(parsed);
-      } catch {
-        toast.error(
-          '분석 진행 상태를 가져오는 중 문제가 발생했어요. 다시 시도해주세요.',
-        );
+      } catch (error) {
+        Sentry.captureException(error);
+        toast.error('분석 진행 상태를 가져오는 중 문제가 발생했어요. 다시 시도해주세요.');
         closeSnackbar(taskId);
         callbacks?.onError?.();
         disconnect(taskId);
@@ -145,6 +145,7 @@ export const useParseSSE = (accountBookId: number) => {
 
     eventSource.onerror = () => {
       if (!completedRef.current[taskId]) {
+        Sentry.captureException(new Error('SSE connection error'));
         toast.error('분석 중 연결이 끊어졌어요. 다시 시도해주세요.');
         closeSnackbar(taskId);
         callbacks?.onError?.();

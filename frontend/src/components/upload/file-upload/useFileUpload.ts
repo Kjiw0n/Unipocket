@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import * as Sentry from '@sentry/react';
 import { toast } from 'sonner';
 
 import { UPLOAD_STATUS, type UploadItem } from '@/components/upload/type';
@@ -66,7 +67,8 @@ export const useFileUpload = (accountBookId: number) => {
       setItem((prev) =>
         prev?.id === id ? { ...prev, status: UPLOAD_STATUS.UPLOADED } : prev,
       );
-    } catch {
+    } catch (error) {
+      Sentry.captureException(error);
       setItem((prev) =>
         prev?.id === id ? { ...prev, status: UPLOAD_STATUS.ERROR } : prev,
       );
@@ -113,7 +115,8 @@ export const useFileUpload = (accountBookId: number) => {
         },
       });
       return true;
-    } catch {
+    } catch (error) {
+      Sentry.captureException(error);
       setItem((prev) =>
         prev ? { ...prev, status: UPLOAD_STATUS.ERROR } : prev,
       );

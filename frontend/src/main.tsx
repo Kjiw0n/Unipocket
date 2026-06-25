@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
+  MutationCache,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -36,8 +37,20 @@ export const queryClient = new QueryClient({
       ) {
         return;
       }
+      Sentry.captureException(error);
       const errorMessage = query.meta?.errorMessage as string;
       toast.error(errorMessage || '데이터를 불러오는데 실패했습니다.');
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (error) => {
+      if (
+        error instanceof ApiError &&
+        error.status === HTTP_STATUS.UNAUTHORIZED
+      ) {
+        return;
+      }
+      Sentry.captureException(error);
     },
   }),
   defaultOptions: {
