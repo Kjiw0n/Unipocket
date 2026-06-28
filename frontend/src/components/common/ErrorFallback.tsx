@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import * as Sentry from '@sentry/react';
 import { useRouter } from '@tanstack/react-router';
 
 import { HTTP_STATUS } from '@/api/config/constants';
@@ -33,6 +34,8 @@ export function ErrorFallback({
       if (!isPublicPath) {
         window.location.href = '/login';
       }
+    } else {
+      Sentry.captureException(error);
     }
   }, [error]);
 
