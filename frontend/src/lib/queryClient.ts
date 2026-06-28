@@ -8,10 +8,9 @@ import { ApiError } from '@/api/config/error';
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
-      if (
-        error instanceof ApiError &&
-        error.status === HTTP_STATUS.UNAUTHORIZED
-      ) {
+      if (error instanceof ApiError && error.status === HTTP_STATUS.UNAUTHORIZED) return;
+      if (error instanceof ApiError && error.status === HTTP_STATUS.NETWORK_ERROR) {
+        toast.error('인터넷 연결을 확인해주세요.');
         return;
       }
       Sentry.captureException(error);
@@ -20,19 +19,20 @@ export const queryClient = new QueryClient({
     },
   }),
   mutationCache: new MutationCache({
-    onError: (error) => {
-      if (
-        error instanceof ApiError &&
-        error.status === HTTP_STATUS.UNAUTHORIZED
-      ) {
+    onError: (error, _vars, _ctx, mutation) => {
+      if (error instanceof ApiError && error.status === HTTP_STATUS.UNAUTHORIZED) return;
+      if (error instanceof ApiError && error.status === HTTP_STATUS.NETWORK_ERROR) {
+        toast.error('인터넷 연결을 확인해주세요.');
         return;
       }
       Sentry.captureException(error);
+      const serverMessage = error instanceof ApiError ? error.message : null;
+      const metaMessage = mutation.meta?.errorMessage as string;
+      toast.error(serverMessage || metaMessage || '요청에 실패했어요.');
     },
   }),
   defaultOptions: {
-    queries: {
-      retry: false,
-    },
+    queries: { retry: false },
+    mutations: { networkMode: 'always' },
   },
 });

@@ -7,7 +7,6 @@ import {
 import { toast } from 'sonner';
 
 import { accountBookKeys } from '@/api/account-books/query';
-import { ApiError } from '@/api/config/error';
 import { expenseKeys } from '@/api/expenses/query';
 import {
   bulkUpdateTempExpenses,
@@ -138,26 +137,14 @@ const usePresignedUrlMutation = (accountBookId: number) =>
   useMutation({
     mutationFn: (data: GetPresignedUrlRequest) =>
       getPresignedUrl(accountBookId, data),
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(error.message || '업로드 URL 발급에 실패했어요.');
-      } else {
-        toast.error('업로드 URL 발급에 실패했어요.');
-      }
-    },
+    meta: { errorMessage: '업로드 URL 발급에 실패했어요.' },
   });
 
 /** 파싱 시작 Mutation */
 const useStartParseMutation = (accountBookId: number) =>
   useMutation({
     mutationFn: (data: StartParseRequest) => startParse(accountBookId, data),
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(error.message || '파싱 시작에 실패했어요.');
-      } else {
-        toast.error('파싱 시작에 실패했어요.');
-      }
-    },
+    meta: { errorMessage: '파싱 시작에 실패했어요.' },
   });
 
 /** 임시지출 확정 Mutation */
@@ -179,13 +166,7 @@ const useConfirmMetaMutation = (accountBookId: number) =>
       });
       toast.success('임시지출이 확정됐어요.');
     },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(error.message || '임시지출 확정에 실패했어요.');
-      } else {
-        toast.error('임시지출 확정에 실패했어요.');
-      }
-    },
+    meta: { errorMessage: '임시지출 확정에 실패했어요.' },
   });
 
 /** 임시지출 일괄 수정 Mutation */
@@ -218,13 +199,7 @@ const useBulkUpdateTempExpensesMutation = () =>
       });
       toast.success('임시지출이 수정됐어요.');
     },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(error.message || '임시지출 수정에 실패했어요.');
-      } else {
-        toast.error('임시지출 수정에 실패했어요.');
-      }
-    },
+    meta: { errorMessage: '임시지출 수정에 실패했어요.' },
   });
 
 /** 메타 삭제 Mutation */
@@ -237,13 +212,7 @@ const useDeleteMetaMutation = (accountBookId: number) =>
       });
       toast.success('임시지출 파일이 삭제됐어요.');
     },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(error.message || '임시지출 파일 삭제에 실패했어요.');
-      } else {
-        toast.error('임시지출 파일 삭제에 실패했어요.');
-      }
-    },
+    meta: { errorMessage: '임시지출 파일 삭제에 실패했어요.' },
   });
 
 /** 기간 외 임시지출 일괄 삭제 Mutation */
@@ -281,13 +250,7 @@ const useDeleteOutOfPeriodExpensesMutation = (
         queryKey: temporaryExpenseKeys.metaFiles(accountBookId, metaId),
       });
     },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(error.message || '기간 외 지출 내역 삭제에 실패했어요.');
-      } else {
-        toast.error('기간 외 지출 내역 삭제에 실패했어요.');
-      }
-    },
+    meta: { errorMessage: '기간 외 지출 내역 삭제에 실패했어요.' },
   });
 
 /** 임시지출 단건 삭제 Mutation */
@@ -321,13 +284,7 @@ const useDeleteTempExpenseMutation = () =>
       });
       toast.success('임시지출이 삭제됐어요.');
     },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(error.message || '임시지출 파일 삭제에 실패했어요.');
-      } else {
-        toast.error('임시지출 파일 삭제에 실패했어요.');
-      }
-    },
+    meta: { errorMessage: '임시지출 파일 삭제에 실패했어요.' },
   });
 
 export {

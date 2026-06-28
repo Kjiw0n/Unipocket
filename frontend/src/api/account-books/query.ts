@@ -63,12 +63,10 @@ const useGetAccountBooksQuery = () => {
 const useCreateAccountBookMutation = () => {
   return useMutation({
     mutationFn: (data: CreateAccountBookRequest) => createAccountBook(data),
+    meta: { errorMessage: '가계부 생성에 실패했어요.' },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: accountBookKeys.list() });
       toast.success('가계부가 생성되었어요.');
-    },
-    onError: () => {
-      toast.error('가계부 생성에 실패했어요.');
     },
   });
 };
@@ -92,6 +90,7 @@ const useDeleteAccountBookMutation = () => {
 
   return useMutation({
     mutationFn: (accountBookId: number) => deleteAccountBook(accountBookId),
+    meta: { errorMessage: '가계부 삭제에 실패했어요.' },
     onSuccess: (_, accountBookId) => {
       const cached = queryClient.getQueryData<{ accountBookId: number }[]>([
         'accountBooks',
@@ -124,9 +123,6 @@ const useDeleteAccountBookMutation = () => {
         toast.success('가계부가 삭제되었어요.');
       }
     },
-    onError: () => {
-      toast.error('가계부 삭제에 실패했어요.');
-    },
   });
 };
 
@@ -139,15 +135,13 @@ const useUpdateAccountBookMutation = () =>
       accountBookId: number;
       data: UpdateAccountBookRequest;
     }) => updateAccountBook(accountBookId, data),
+    meta: { errorMessage: '가계부 수정에 실패했어요.' },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: accountBookKeys.list() });
       queryClient.invalidateQueries({
         queryKey: accountBookKeys.detail(variables.accountBookId),
       });
       toast.success('가계부가 수정되었어요.');
-    },
-    onError: () => {
-      toast.error('가계부 수정에 실패했어요.');
     },
   });
 
@@ -172,14 +166,12 @@ const useUpdateAccountBookBudgetMutation = () => {
     mutationFn: (budget: number) => {
       return updateAccountBookBudget(accountBookId, budget);
     },
+    meta: { errorMessage: '예산 저장에 실패했어요.' },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: widgetKeys.detailType(accountBookId, 'BUDGET'),
       });
       toast.success('예산이 저장되었어요.');
-    },
-    onError: () => {
-      toast.error('예산 저장에 실패했어요.');
     },
   });
 };

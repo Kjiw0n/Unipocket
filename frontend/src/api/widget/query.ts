@@ -93,14 +93,12 @@ export const useUpdateWidgetLayoutMutation = () => {
   return useMutation({
     mutationFn: (data: UpdateWidgetLayoutRequest) =>
       updateWidgetLayout(accountBookId, data),
+    meta: { errorMessage: '위젯 순서 저장에 실패했어요.' },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: widgetKeys.layout(accountBookId),
       });
       toast.success('위젯 순서가 저장되었어요.');
-    },
-    onError: () => {
-      toast.error('위젯 순서 저장에 실패했어요.');
     },
   });
 };

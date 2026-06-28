@@ -97,6 +97,7 @@ export const useUpdateExpenseMutation = () =>
       expenseId: number | string;
       data: UpdateExpenseRequest;
     }) => updateExpense(accountBookId, expenseId, data),
+    meta: { errorMessage: '지출 수정에 실패했어요.' },
     onSuccess: (_, variables) => {
       invalidateRelatedQueries(
         variables.accountBookId,
@@ -109,9 +110,6 @@ export const useUpdateExpenseMutation = () =>
         ),
       });
       toast.success('지출 내역이 수정되었어요.');
-    },
-    onError: () => {
-      toast.error('지출 수정에 실패했어요.');
     },
   });
 
@@ -126,12 +124,10 @@ export const useBulkUpdateExpensesMutation = () =>
       data: BulkUpdateExpenseRequest;
       travelId?: number | string;
     }) => bulkUpdateExpenses(accountBookId, data),
+    meta: { errorMessage: '지출 일괄 수정에 실패했어요.' },
     onSuccess: (_, variables) => {
       invalidateRelatedQueries(variables.accountBookId, variables.travelId);
       toast.success('지출 내역이 일괄 수정되었어요.');
-    },
-    onError: () => {
-      toast.error('지출 일괄 수정에 실패했어요.');
     },
   });
 
@@ -146,6 +142,7 @@ export const useDeleteExpenseMutation = () =>
       expenseId: number | string;
       travelId?: number | string;
     }) => deleteExpense(accountBookId, expenseId),
+    meta: { errorMessage: '지출 삭제에 실패했어요.' },
     onSuccess: (_, variables) => {
       invalidateRelatedQueries(variables.accountBookId, variables.travelId);
       queryClient.removeQueries({
@@ -155,9 +152,6 @@ export const useDeleteExpenseMutation = () =>
         ),
       });
       toast.success('지출 내역이 삭제되었어요.');
-    },
-    onError: () => {
-      toast.error('지출 삭제에 실패했어요.');
     },
   });
 
@@ -171,15 +165,13 @@ export const useCreateManualExpenseMutation = () =>
       accountBookId: number | string;
       data: CreateManualExpenseRequest;
     }) => createManualExpense(accountBookId, data),
+    meta: { errorMessage: '지출 생성에 실패했어요.' },
     onSuccess: (_, variables) => {
       invalidateRelatedQueries(
         variables.accountBookId,
         variables.data.travelId,
       );
       toast.success('지출 내역이 생성되었어요.');
-    },
-    onError: () => {
-      toast.error('지출 생성에 실패했어요.');
     },
   });
 
