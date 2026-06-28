@@ -25,7 +25,7 @@ import type {
 } from '@/api/expenses/type';
 import { travelKeys } from '@/api/travels/query';
 import { widgetKeys } from '@/api/widget/query';
-import { queryClient } from '@/main';
+import { queryClient } from '@/lib/queryClient';
 
 export const expenseKeys = {
   all: ['expenses'] as const,

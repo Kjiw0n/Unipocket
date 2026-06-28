@@ -27,7 +27,7 @@ import type {
 } from '@/api/account-books/type';
 import { widgetKeys } from '@/api/widget/query';
 import type { CurrencyCode } from '@/data/country/currencyCode';
-import { queryClient } from '@/main';
+import { queryClient } from '@/lib/queryClient';
 import {
   useAccountBookStore,
   useRequiredAccountBook,

@@ -8,7 +8,7 @@ import {
   getCards,
   updateCardNickname,
 } from '@/api/cards/api';
-import { queryClient } from '@/main';
+import { queryClient } from '@/lib/queryClient';
 
 import type { CreateCardRequest, UpdateCardNicknameRequest } from './type';
 

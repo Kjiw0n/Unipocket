@@ -8,7 +8,7 @@ import {
   accountBookDetailQueryOptions,
   useGetAccountBooksQuery,
 } from '@/api/account-books/query';
-import { queryClient } from '@/main';
+import { queryClient } from '@/lib/queryClient';
 import { useAccountBookStore } from '@/stores/accountBookStore';
 import { useParseSnackbarStore } from '@/stores/parseSnackbarStore';
 
