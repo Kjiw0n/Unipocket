@@ -10,6 +10,7 @@ export const ERROR_NAMES = {
 export type ErrorName = (typeof ERROR_NAMES)[keyof typeof ERROR_NAMES];
 
 export const HTTP_STATUS = {
+  NETWORK_ERROR: 0,
   OK: 200,
   NO_CONTENT: 204,
   BAD_REQUEST: 400,
