@@ -15,7 +15,7 @@ import {
   getUser,
 } from '@/api/users/api';
 import type { CreateCardRequest } from '@/api/users/type';
-import { queryClient } from '@/main';
+import { queryClient } from '@/lib/queryClient';
 
 const userKeys = {
   all: ['users'] as const,

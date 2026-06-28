@@ -29,7 +29,7 @@ import type {
   UpdateTravelRequest,
   UpdateTravelWidgetLayoutRequest,
 } from '@/api/travels/type';
-import { queryClient } from '@/main';
+import { queryClient } from '@/lib/queryClient';
 import { useRequiredAccountBook } from '@/stores/accountBookStore';
 
 export const travelKeys = {

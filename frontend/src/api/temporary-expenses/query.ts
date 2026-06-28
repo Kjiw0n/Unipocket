@@ -28,7 +28,7 @@ import type {
   TempExpenseFile,
 } from '@/api/temporary-expenses/type';
 import { widgetKeys } from '@/api/widget/query';
-import { queryClient } from '@/main';
+import { queryClient } from '@/lib/queryClient';
 
 export const temporaryExpenseKeys = {
   all: ['temporaryExpenses'] as const,

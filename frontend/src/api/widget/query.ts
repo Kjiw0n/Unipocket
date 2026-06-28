@@ -18,7 +18,7 @@ import {
   getWidgetLayout,
   updateWidgetLayout,
 } from '@/api/widget/api';
-import { queryClient } from '@/main';
+import { queryClient } from '@/lib/queryClient';
 import { useRequiredAccountBook } from '@/stores/accountBookStore';
 
 import type { UpdateWidgetLayoutRequest, WidgetResponseMap } from './type';
