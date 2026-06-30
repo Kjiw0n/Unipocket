@@ -68,37 +68,31 @@ const useGetCardCompaniesQuery = () => {
 const useDeleteUserMutation = () =>
   useMutation({
     mutationFn: () => deleteUser(),
+    meta: { errorMessage: '회원 탈퇴에 실패했어요.' },
     onSuccess: () => {
       queryClient.clear();
       toast.success('회원 탈퇴가 완료되었어요.');
       window.location.href = '/';
-    },
-    onError: () => {
-      toast.error('회원 탈퇴에 실패했어요.');
     },
   });
 
 const useCreateCardMutation = () =>
   useMutation({
     mutationFn: (data: CreateCardRequest) => createCard(data),
+    meta: { errorMessage: '카드 등록에 실패했어요.' },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.cardList() });
       toast.success('카드가 등록되었어요.');
-    },
-    onError: () => {
-      toast.error('카드 등록에 실패했어요.');
     },
   });
 
 const useDeleteCardMutation = () =>
   useMutation({
     mutationFn: (cardId: number) => deleteCard(cardId),
+    meta: { errorMessage: '카드 삭제에 실패했어요.' },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.cardList() });
       toast.success('카드가 삭제되었어요.');
-    },
-    onError: () => {
-      toast.error('카드 삭제에 실패했어요.');
     },
   });
 

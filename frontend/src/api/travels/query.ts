@@ -135,14 +135,12 @@ export const useCreateTravelMutation = () => {
   return useMutation({
     mutationFn: (data: CreateTravelRequest) =>
       createTravel(accountBookId, data),
+    meta: { errorMessage: '여행 생성에 실패했어요.' },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: travelKeys.list(accountBookId),
       });
       toast.success('여행이 생성되었어요.');
-    },
-    onError: () => {
-      toast.error('여행 생성에 실패했어요.');
     },
   });
 };
@@ -153,6 +151,7 @@ export const useUpdateTravelMutation = (travelId: number | string) => {
   return useMutation({
     mutationFn: (data: UpdateTravelRequest) =>
       updateTravel(accountBookId, travelId, data),
+    meta: { errorMessage: '여행 수정에 실패했어요.' },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: travelKeys.list(accountBookId),
@@ -161,9 +160,6 @@ export const useUpdateTravelMutation = (travelId: number | string) => {
         queryKey: travelKeys.detail(accountBookId, travelId),
       });
       toast.success('여행이 수정되었어요.');
-    },
-    onError: () => {
-      toast.error('여행 수정에 실패했어요.');
     },
   });
 };
@@ -177,6 +173,7 @@ export const usePatchTravelMutation = () => {
       ...data
     }: PatchTravelRequest & { travelId: number | string }) =>
       patchTravel(accountBookId, travelId, data),
+    meta: { errorMessage: '여행 수정에 실패했어요.' },
     onSuccess: (_, { travelId }) => {
       queryClient.invalidateQueries({
         queryKey: travelKeys.list(accountBookId),
@@ -185,9 +182,6 @@ export const usePatchTravelMutation = () => {
         queryKey: travelKeys.detail(accountBookId, travelId),
       });
       toast.success('여행이 수정되었어요.');
-    },
-    onError: () => {
-      toast.error('여행 수정에 실패했어요.');
     },
   });
 };
@@ -198,6 +192,7 @@ export const useDeleteTravelMutation = () => {
   return useMutation({
     mutationFn: (travelId: number | string) =>
       deleteTravel(accountBookId, travelId),
+    meta: { errorMessage: '여행 삭제에 실패했어요.' },
     onSuccess: (_, travelId) => {
       queryClient.invalidateQueries({
         queryKey: travelKeys.list(accountBookId),
@@ -206,9 +201,6 @@ export const useDeleteTravelMutation = () => {
         queryKey: travelKeys.detail(accountBookId, travelId),
       });
       toast.success('여행이 삭제되었어요.');
-    },
-    onError: () => {
-      toast.error('여행 삭제에 실패했어요.');
     },
   });
 };
@@ -219,9 +211,7 @@ export const useGetTravelPresignedUrlMutation = () => {
   return useMutation({
     mutationFn: (data: GetPresignedUrlRequest) =>
       getTravelPresignedUrl(accountBookId, data),
-    onError: () => {
-      toast.error('이미지 업로드 URL 발급에 실패했어요.');
-    },
+    meta: { errorMessage: '이미지 업로드 URL 발급에 실패했어요.' },
   });
 };
 
@@ -231,9 +221,7 @@ export const useGetTravelImageUrlMutation = () => {
   return useMutation({
     mutationFn: (imageKey: string) =>
       getTravelImageUrl(accountBookId, imageKey),
-    onError: () => {
-      toast.error('이미지 URL 조회에 실패했어요.');
-    },
+    meta: { errorMessage: '이미지 URL 조회에 실패했어요.' },
   });
 };
 
@@ -288,14 +276,12 @@ export const useUpdateTravelWidgetLayoutMutation = (
   return useMutation({
     mutationFn: (data: UpdateTravelWidgetLayoutRequest) =>
       updateTravelWidgetLayout(accountBookId, travelId, data),
+    meta: { errorMessage: '위젯 순서 저장에 실패했어요.' },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: travelKeys.widgetLayout(accountBookId, travelId),
       });
       toast.success('위젯 순서가 저장되었어요.');
-    },
-    onError: () => {
-      toast.error('위젯 순서 저장에 실패했어요.');
     },
   });
 };
@@ -313,14 +299,12 @@ export const useUpdateTravelBudgetMutation = () => {
     }) => {
       return updateTravelBudget(accountBookId, travelId, budget);
     },
+    meta: { errorMessage: '예산 저장에 실패했어요.' },
     onSuccess: (_, { travelId }) => {
       queryClient.invalidateQueries({
         queryKey: travelKeys.widgetByType(accountBookId, travelId, 'BUDGET'),
       });
       toast.success('예산이 저장되었어요.');
-    },
-    onError: () => {
-      toast.error('예산 저장에 실패했어요.');
     },
   });
 };

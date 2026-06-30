@@ -153,7 +153,15 @@ export const customFetch = async <T>({
       throw error;
     }
 
-    // 그 외는 네트워크 에러로 간주
+    // fetch가 네트워크 단절 시 TypeError를 던지므로 별도 식별자로 변환
+    if (error instanceof TypeError) {
+      throw new ApiError({
+        status: HTTP_STATUS.NETWORK_ERROR,
+        message: '인터넷 연결을 확인해주세요.',
+      });
+    }
+
+    // 그 외는 서버 에러로 간주
     throw new ApiError({
       status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
     });

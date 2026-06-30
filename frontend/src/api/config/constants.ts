@@ -10,6 +10,7 @@ export const ERROR_NAMES = {
 export type ErrorName = (typeof ERROR_NAMES)[keyof typeof ERROR_NAMES];
 
 export const HTTP_STATUS = {
+  NETWORK_ERROR: 0,
   OK: 200,
   NO_CONTENT: 204,
   BAD_REQUEST: 400,
@@ -29,6 +30,6 @@ const DEFAULT_ERROR_MESSAGES: Record<number, string> = {
     '서버 점검 중입니다. 잠시 후 다시 시도해주세요.',
 };
 
-export function getDefaultErrorMessage(status: number): string {
-  return DEFAULT_ERROR_MESSAGES[status] || '알 수 없는 에러';
+export function getDefaultErrorMessage(status: number): string | undefined {
+  return DEFAULT_ERROR_MESSAGES[status];
 }
