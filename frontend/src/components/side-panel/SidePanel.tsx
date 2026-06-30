@@ -32,7 +32,7 @@ const SidePanel = ({ isOpen, onClose }: SidePanelProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLTextAreaElement>(null);
 
-  const { mutate } = useCreateManualExpenseMutation();
+  const { mutate, isPending } = useCreateManualExpenseMutation();
   const {
     accountBookId,
     startDate: startDateStr,
@@ -189,7 +189,7 @@ const SidePanel = ({ isOpen, onClose }: SidePanelProps) => {
           }}
         />
         <div className="flex items-center gap-2">
-          <Button variant="solid" onClick={handleSubmit}>
+          <Button variant="solid" disabled={isPending} onClick={handleSubmit}>
             저장
           </Button>
           <Button onClick={handleReset}>초기화</Button>

@@ -15,7 +15,8 @@ type Step = 'select-country' | 'select-date';
 
 const InitPage = () => {
   const navigate = useNavigate();
-  const { mutate: createAccountBook } = useCreateAccountBookMutation();
+  const { mutate: createAccountBook, isPending } =
+    useCreateAccountBookMutation();
   const [step, setStep] = useState<Step>('select-country');
   const [selectedCountry, setSelectedCountry] = useState<CountryCode | null>(
     null,
@@ -95,7 +96,7 @@ const InitPage = () => {
             <Button
               variant="solid"
               size="lg"
-              disabled={!isDateValid}
+              disabled={!isDateValid || isPending}
               onClick={handleDateConfirm}
             >
               가계부 시작하기
