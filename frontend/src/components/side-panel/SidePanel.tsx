@@ -19,6 +19,7 @@ import { useCreateManualExpenseMutation } from '@/api/expenses/query';
 import type { CreateManualExpenseRequest } from '@/api/expenses/type';
 import { useGetCardsQuery } from '@/api/users/query';
 import { NONE_TRAVEL } from '@/constants/column';
+import { trackEvent } from '@/lib/analytics';
 import { parseStringToDate } from '@/lib/utils';
 import { useRequiredAccountBook } from '@/stores/accountBookStore';
 
@@ -135,6 +136,7 @@ const SidePanel = ({ isOpen, onClose }: SidePanelProps) => {
       { accountBookId, data: request },
       {
         onSuccess: () => {
+          trackEvent('expense_add_manual');
           onClose();
           handleReset();
         },

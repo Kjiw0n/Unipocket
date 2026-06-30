@@ -7,6 +7,7 @@ import { uploadPolicy } from '@/components/upload/upload-box/useFileValidator';
 import { useParseSSE } from '@/components/upload/useParseSSE';
 
 import { getPresignedUrl, startParse } from '@/api/temporary-expenses/api';
+import { trackEvent } from '@/lib/analytics';
 
 const MAX_TOTAL = uploadPolicy.image.maxCount;
 
@@ -34,6 +35,8 @@ export const useImageUpload = (accountBookId: number) => {
       toast.error(`최대 ${MAX_TOTAL}개까지 업로드할 수 있어요.`);
       return;
     }
+
+    trackEvent('upload_start', { type: 'image' });
 
     for (const file of files) {
       const id = crypto.randomUUID();
@@ -133,7 +136,8 @@ export const useImageUpload = (accountBookId: number) => {
                 : item,
             ),
           ),
-        onComplete: () =>
+        onComplete: () => {
+          trackEvent('upload_complete', { type: 'image' });
           setItems((prev) =>
             prev.map((item) =>
               item.taskId === parse.taskId &&
@@ -141,7 +145,8 @@ export const useImageUpload = (accountBookId: number) => {
                 ? { ...item, status: UPLOAD_STATUS.PARSED }
                 : item,
             ),
-          ),
+          );
+        },
       });
       return true;
     } catch (error) {

@@ -8,6 +8,7 @@ import { SelectDateContent } from '@/components/modal/SelectDateModal';
 
 import { useCreateAccountBookMutation } from '@/api/account-books/query';
 import { type CountryCode } from '@/data/country/countryCode';
+import { trackEvent } from '@/lib/analytics';
 import { formatDateToString } from '@/lib/utils';
 
 type Step = 'select-country' | 'select-date';
@@ -56,6 +57,7 @@ const InitPage = () => {
       },
       {
         onSuccess: () => {
+          trackEvent('onboarding_complete');
           navigate({ to: '/home' });
         },
       },

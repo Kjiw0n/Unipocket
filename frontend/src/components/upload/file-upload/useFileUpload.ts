@@ -6,6 +6,7 @@ import { UPLOAD_STATUS, type UploadItem } from '@/components/upload/type';
 import { useParseSSE } from '@/components/upload/useParseSSE';
 
 import { getPresignedUrl, startParse } from '@/api/temporary-expenses/api';
+import { trackEvent } from '@/lib/analytics';
 
 export const useFileUpload = (accountBookId: number) => {
   const [item, setItem] = useState<UploadItem | null>(null);
@@ -31,6 +32,7 @@ export const useFileUpload = (accountBookId: number) => {
     if (files.length !== 1) return;
 
     const file = files[0];
+    trackEvent('upload_start', { type: 'file' });
     const id = crypto.randomUUID();
     const mimeType = file.type || 'application/octet-stream';
 
@@ -104,7 +106,10 @@ export const useFileUpload = (accountBookId: number) => {
           : prev,
       );
       connect(parse.taskId, metaIdRef.current, 'file', {
-        onComplete: () => setIsParsing(false),
+        onComplete: () => {
+          trackEvent('upload_complete', { type: 'file' });
+          setIsParsing(false);
+        },
         onError: () => {
           setItem((prev) =>
             prev?.taskId === parse.taskId
