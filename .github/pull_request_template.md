@@ -1,10 +1,6 @@
 ## 작업 내용
+<!-- bullet points describing what changed -->
 - 
 
 ## 배경
-<!-- 왜 이 작업을 했는지, 어떤 문제를 해결하는지 -->
-
-## 체크사항
-- [ ] lint 통과
-- [ ] build 통과
-- [ ] 주요 플로우 확인
+<!-- why this work was done, what problem it solves -->
