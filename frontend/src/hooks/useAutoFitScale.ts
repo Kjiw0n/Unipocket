@@ -62,18 +62,24 @@ export const useAutoFitScaleToViewport = <T extends HTMLElement>(
     const el = ref.current;
     if (!el) return;
 
-    // getBoundingClientRect().top은 transform-origin: top 기준에서 scale 후에도 동일
-    const rect = el.getBoundingClientRect();
-    const availableHeight = window.innerHeight - rect.top - paddingBottom;
+    const computeScale = () => {
+      // getBoundingClientRect().top은 transform-origin: top 기준에서 scale 후에도 동일
+      const rect = el.getBoundingClientRect();
+      const availableHeight = window.innerHeight - rect.top - paddingBottom;
 
-    // scrollHeight는 CSS transform에 영향받지 않아 항상 원본 높이를 반환
-    const naturalHeight = el.scrollHeight;
+      // scrollHeight는 CSS transform에 영향받지 않아 항상 원본 높이를 반환
+      const naturalHeight = el.scrollHeight;
 
-    if (naturalHeight > availableHeight && availableHeight > 0) {
-      setScale(Math.max(minScale, availableHeight / naturalHeight));
-    } else {
-      setScale(1);
-    }
+      if (naturalHeight > availableHeight && availableHeight > 0) {
+        setScale(Math.max(minScale, availableHeight / naturalHeight));
+      } else {
+        setScale(1);
+      }
+    };
+
+    computeScale();
+    window.addEventListener('resize', computeScale);
+    return () => window.removeEventListener('resize', computeScale);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paddingBottom, minScale, ...dependencies]);
 

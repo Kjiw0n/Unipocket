@@ -26,6 +26,8 @@ export type HttpStatus = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];
 const DEFAULT_ERROR_MESSAGES: Record<number, string> = {
   [HTTP_STATUS.UNAUTHORIZED]: '로그인이 필요하거나 세션이 만료되었습니다.',
   [HTTP_STATUS.FORBIDDEN]: '접근 권한이 없습니다.',
+  [HTTP_STATUS.REQUEST_TIMEOUT]:
+    '요청 시간이 초과됐어요. 네트워크 상태를 확인해주세요.',
   [HTTP_STATUS.INTERNAL_SERVER_ERROR]:
     '서버 점검 중입니다. 잠시 후 다시 시도해주세요.',
 };
