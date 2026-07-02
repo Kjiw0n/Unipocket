@@ -9,11 +9,13 @@ import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { initAnalytics } from '@/lib/analytics';
+import { initHotjar } from '@/lib/hotjar';
 import { queryClient } from '@/lib/queryClient';
 import { initSentry } from '@/lib/sentry';
 import { routeTree } from '@/routeTree.gen';
 
 initSentry();
+initHotjar();
 
 const TOOLTIP_DELAY_DURATION = 300;
 
