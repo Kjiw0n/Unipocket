@@ -38,7 +38,10 @@ const ProfilePopover = () => {
     <Popover>
       <PopoverTrigger asChild>
         <img
-          src={data.profileImgUrl || ProfileImage}
+          src={
+            data.profileImgUrl?.replace(/^http:\/\//, 'https://') ||
+            ProfileImage
+          }
           alt="프로필 이미지"
           className="h-8 w-8 cursor-pointer rounded-full object-cover"
           referrerPolicy="no-referrer"

@@ -31,7 +31,11 @@ const Menu = () => {
 
   return (
     <nav className="border-line-normal-normal bg-background-normal sticky top-0 bottom-0 left-0 flex w-16 flex-col items-center gap-9 border-r px-4 py-3">
-      <Link to="/home" onClick={(e) => handleRefreshClick(e, '/home')}>
+      <Link
+        to="/home"
+        aria-label="홈으로 이동"
+        onClick={(e) => handleRefreshClick(e, '/home')}
+      >
         <Icons.Logo className="size-8 cursor-pointer" />
       </Link>
       {!isInitPath && (
