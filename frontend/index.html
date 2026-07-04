@@ -10,10 +10,6 @@
     />
     <title>Unipocket</title>
     <link rel="preconnect" href="https://storage.googleapis.com" crossorigin />
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA_MEASUREMENT_ID%"
-    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -21,6 +17,14 @@
       }
       gtag('js', new Date());
       gtag('config', '%VITE_GA_MEASUREMENT_ID%', { send_page_view: false });
+      // load 이후 로드해도 dataLayer 큐가 이벤트를 보관하므로 유실 없음
+      window.addEventListener('load', function () {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src =
+          'https://www.googletagmanager.com/gtag/js?id=%VITE_GA_MEASUREMENT_ID%';
+        document.head.appendChild(s);
+      });
     </script>
   </head>
   <body>
