@@ -73,7 +73,8 @@ pnpm format       # Prettier 포맷
 
 | 변수 | 설명 |
 |------|------|
-| `VITE_API_PROXY_TARGET` | API 서버 URL (dev: localhost, prod: api.unipocket.co.kr) |
+| `VITE_API_PROXY_TARGET` | dev 서버 프록시 대상 API URL (dev: localhost) |
+| `VITE_API_BASE_URL` | API 요청 base URL (dev/prod 모두 `/api` — dev는 Vite 프록시, prod는 Vercel rewrites가 BE로 전달) |
 | `SENTRY_AUTH_TOKEN` | Sentry 소스맵 업로드 토큰 (프로덕션 빌드 전용) |
 | `SENTRY_ORG` / `SENTRY_PROJECT` | Sentry 프로젝트 식별자 |
 
