@@ -1,36 +1,5 @@
-@font-face {
-  font-family: 'Pretendard';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url('https://storage.googleapis.com/unipocket-cdn-5ba3282c/assets/fonts/Pretendard-Regular.subset.woff2')
-    format('woff2');
-}
-@font-face {
-  font-family: 'Pretendard';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src: url('https://storage.googleapis.com/unipocket-cdn-5ba3282c/assets/fonts/Pretendard-Medium.subset.woff2')
-    format('woff2');
-}
-@font-face {
-  font-family: 'Pretendard';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 600;
-  src: url('https://storage.googleapis.com/unipocket-cdn-5ba3282c/assets/fonts/Pretendard-SemiBold.subset.woff2')
-    format('woff2');
-}
-@font-face {
-  font-family: 'Pretendard';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 700;
-  src: url('https://storage.googleapis.com/unipocket-cdn-5ba3282c/assets/fonts/Pretendard-Bold.subset.woff2')
-    format('woff2');
-}
-
+/* Pretendard variable dynamic subset — unicode-range로 화면에 쓰인 글자 범위의 조각만 다운로드 */
+@import './pretendard.css';
 @import 'tailwindcss';
 @import './typography.css';
 @import './color.css';
