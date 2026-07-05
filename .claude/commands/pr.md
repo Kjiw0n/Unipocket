@@ -27,5 +27,6 @@ Create a PR for the current branch. Show a draft to the user first and wait for 
 
 - Never add Co-Authored-By to anything
 - Base branch is always `develop`
-- Do not create the PR until the user explicitly approves the draft
+- Do not create the PR until the user explicitly approves the draft — always ask for explicit go-ahead before running `gh pr create`, every time, with no exceptions
 - If the issue file has a "배경" or "문제 상황" section, use it to fill 배경
+- Commit message style (if commits need to be made as part of this flow): `feat:`/`fix:`/`refactor:`/`chore:` lowercase conventional style — this is separate from the PR title's `[TYPE]` bracket format above, which stays as-is
