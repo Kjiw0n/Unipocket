@@ -62,6 +62,11 @@ export default defineConfig(({ mode }) => {
             [cookieDomain]: 'localhost',
           },
         },
+        '/cdn-assets': {
+          target: 'https://storage.googleapis.com/unipocket-cdn-5ba3282c',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/cdn-assets/, ''),
+        },
       },
     },
   };
