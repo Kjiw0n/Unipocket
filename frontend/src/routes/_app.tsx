@@ -5,6 +5,7 @@ import Menu from '@/components/layout/menu/Menu';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import {
+  accountBookAmountQueryOptions,
   accountBookDetailQueryOptions,
   accountBooksQueryOptions,
 } from '@/api/account-books/query';
@@ -19,17 +20,21 @@ export const Route = createFileRoute('/_app')({
       useAccountBookStore.getState();
     const storedId = accountBook?.accountBookId;
 
-    // 인증 확인·가계부 목록·직전 사용 가계부 상세를 병렬로 시작한다.
-    // 순차 대기 시 API 3회 왕복이 첫 렌더링을 막아 FCP/LCP가 밀린다.
+    // 인증 확인·가계부 목록·직전 사용 가계부 상세·금액을 병렬 처리
     const accountBooksPromise = queryClient.fetchQuery(
       accountBooksQueryOptions,
     );
     const storedDetailPromise = storedId
       ? queryClient.fetchQuery(accountBookDetailQueryOptions(storedId))
       : null;
-    // 비로그인(401)이나 삭제된 가계부(404)로 거부돼도 requireAuth의 redirect가 우선이므로 무시
+    const storedAmountPromise = storedId
+      ? queryClient.fetchQuery(accountBookAmountQueryOptions(storedId))
+      : null;
+
+    // auth 실패 시 redirect 발생하므로 에러 처리 미진행
     accountBooksPromise.catch(() => {});
     storedDetailPromise?.catch(() => {});
+    storedAmountPromise?.catch(() => {});
 
     const user = await requireAuth();
 
@@ -56,12 +61,23 @@ export const Route = createFileRoute('/_app')({
     const isStoredValid =
       !!storedId && accountBooks.some((ab) => ab.accountBookId === storedId);
 
+    const resolvedAccountBookId = isStoredValid
+      ? storedId
+      : accountBooks[0].accountBookId;
+
+    const amountPromise = isStoredValid
+      ? storedAmountPromise
+      : queryClient.fetchQuery(
+          accountBookAmountQueryOptions(resolvedAccountBookId),
+        );
+    amountPromise?.catch(() => {});
+
     try {
       const accountBookDetail =
         isStoredValid && storedDetailPromise
           ? await storedDetailPromise
           : await queryClient.fetchQuery(
-              accountBookDetailQueryOptions(accountBooks[0].accountBookId),
+              accountBookDetailQueryOptions(resolvedAccountBookId),
             );
       setAccountBook(accountBookDetail);
     } catch (error) {

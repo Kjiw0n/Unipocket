@@ -193,17 +193,21 @@ const useGetExchangeRateQuery = (
   });
 };
 
+const accountBookAmountQueryOptions = (accountBookId: number | undefined) =>
+  queryOptions({
+    queryKey: accountBookKeys.amount(accountBookId),
+    queryFn: () => getAccountBookAmount(accountBookId as number),
+    enabled: !!accountBookId,
+  });
+
 const useGetAccountBookAmountQuery = () => {
   const { accountBookId } = useRequiredAccountBook();
 
-  return useQuery({
-    queryKey: accountBookKeys.amount(accountBookId),
-    queryFn: () => getAccountBookAmount(accountBookId),
-    enabled: !!accountBookId,
-  });
+  return useQuery(accountBookAmountQueryOptions(accountBookId));
 };
 
 export {
+  accountBookAmountQueryOptions,
   accountBookDetailQueryOptions,
   accountBookKeys,
   accountBooksQueryOptions,
