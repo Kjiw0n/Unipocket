@@ -1,5 +1,5 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
-
+/* Pretendard variable dynamic subset — unicode-range로 화면에 쓰인 글자 범위의 조각만 다운로드 */
+@import './pretendard.css';
 @import 'tailwindcss';
 @import './typography.css';
 @import './color.css';

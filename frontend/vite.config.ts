@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
         : []),
     ],
     build: {
-      sourcemap: mode === 'production',
+      sourcemap: mode === 'production' ? 'hidden' : false,
     },
     resolve: {
       alias: [{ find: '@', replacement: '/src' }],

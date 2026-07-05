@@ -73,11 +73,13 @@ const SortDropdown = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Icons.SwapVertical
-          width={20}
-          height={20}
+        <button
+          type="button"
+          aria-label="정렬 기준 선택"
           className="hover:bg-fill-normal cursor-pointer rounded-lg transition-opacity"
-        />
+        >
+          <Icons.SwapVertical width={20} height={20} aria-hidden="true" />
+        </button>
       </PopoverTrigger>
       <PopoverContent
         align="end"

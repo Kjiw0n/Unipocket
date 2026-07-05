@@ -37,12 +37,19 @@ const ProfilePopover = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <img
-          src={data.profileImgUrl || ProfileImage}
-          alt="프로필 이미지"
-          className="h-8 w-8 cursor-pointer rounded-full object-cover"
-          referrerPolicy="no-referrer"
-        />
+        <button type="button" aria-label="프로필 메뉴 열기">
+          <img
+            src={
+              data.profileImgUrl
+                ?.replace(/^http:\/\//, 'https://')
+                // 카카오 썸네일 스펙(R640x640.q70 등)을 표시 크기에 맞는 110x110으로 교체
+                .replace('640x640', '110x110') || ProfileImage
+            }
+            alt=""
+            className="h-8 w-8 cursor-pointer rounded-full object-cover"
+            referrerPolicy="no-referrer"
+          />
+        </button>
       </PopoverTrigger>
       <PopoverContent
         align="end"
