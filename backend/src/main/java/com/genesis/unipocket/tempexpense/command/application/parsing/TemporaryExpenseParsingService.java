@@ -44,6 +44,8 @@ public class TemporaryExpenseParsingService {
 	private static final String FILE_PROGRESS_CODE_SUCCESS = "SUCCESS";
 	private static final String FILE_PROGRESS_CODE_FAILED_TOO_MANY_REQUEST =
 			"FAILED_TOO_MANY_REQUEST";
+	private static final String FILE_PROGRESS_CODE_FAILED_TIMEOUT = "FAILED_TIMEOUT";
+	private static final String FILE_PROGRESS_CODE_SERVICE_UNAVAILABLE = "SERVICE_UNAVAILABLE";
 	private static final String FILE_PROGRESS_CODE_INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
 
 	private final FileRepository fileRepository;
@@ -211,14 +213,7 @@ public class TemporaryExpenseParsingService {
 			return;
 		}
 
-		ErrorCode terminalCode =
-				failedFiles.stream()
-								.allMatch(
-										failedFile ->
-												failedFile.errorCode()
-														== ErrorCode.TEMP_EXPENSE_PARSE_RATE_LIMIT)
-						? ErrorCode.TEMP_EXPENSE_PARSE_RATE_LIMIT
-						: ErrorCode.TEMP_EXPENSE_PARSE_FAILED;
+		ErrorCode terminalCode = resolveTerminalErrorCode(failedFiles);
 		String summaryMessage = buildTerminalSummaryMessage(succeededFileKeys, failedFiles);
 		progressPublisher.publishError(taskId, terminalCode, summaryMessage);
 	}
@@ -235,6 +230,12 @@ public class TemporaryExpenseParsingService {
 		if (!geminiResponse.success()) {
 			if (geminiResponse.isRateLimited()) {
 				throw new BusinessException(ErrorCode.TEMP_EXPENSE_PARSE_RATE_LIMIT);
+			}
+			if (geminiResponse.isTimeout()) {
+				throw new BusinessException(ErrorCode.TEMP_EXPENSE_PARSE_TIMEOUT);
+			}
+			if (geminiResponse.isServiceUnavailable()) {
+				throw new BusinessException(ErrorCode.TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE);
 			}
 			throw new BusinessException(ErrorCode.TEMP_EXPENSE_PARSE_FAILED);
 		}
@@ -305,7 +306,37 @@ public class TemporaryExpenseParsingService {
 		if (errorCodeOrNull == ErrorCode.TEMP_EXPENSE_PARSE_RATE_LIMIT) {
 			return FILE_PROGRESS_CODE_FAILED_TOO_MANY_REQUEST;
 		}
+		if (errorCodeOrNull == ErrorCode.TEMP_EXPENSE_PARSE_TIMEOUT) {
+			return FILE_PROGRESS_CODE_FAILED_TIMEOUT;
+		}
+		if (errorCodeOrNull == ErrorCode.TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE) {
+			return FILE_PROGRESS_CODE_SERVICE_UNAVAILABLE;
+		}
 		return FILE_PROGRESS_CODE_INTERNAL_SERVER_ERROR;
+	}
+
+	private ErrorCode resolveTerminalErrorCode(List<FailedFile> failedFiles) {
+		if (failedFiles.stream()
+				.allMatch(
+						failedFile ->
+								failedFile.errorCode()
+										== ErrorCode.TEMP_EXPENSE_PARSE_RATE_LIMIT)) {
+			return ErrorCode.TEMP_EXPENSE_PARSE_RATE_LIMIT;
+		}
+		if (failedFiles.stream()
+				.allMatch(
+						failedFile ->
+								failedFile.errorCode() == ErrorCode.TEMP_EXPENSE_PARSE_TIMEOUT)) {
+			return ErrorCode.TEMP_EXPENSE_PARSE_TIMEOUT;
+		}
+		if (failedFiles.stream()
+				.allMatch(
+						failedFile ->
+								failedFile.errorCode()
+										== ErrorCode.TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE)) {
+			return ErrorCode.TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE;
+		}
+		return ErrorCode.TEMP_EXPENSE_PARSE_FAILED;
 	}
 
 	private String buildTerminalSummaryMessage(

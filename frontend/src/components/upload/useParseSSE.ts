@@ -28,9 +28,13 @@ const PARSE_ERROR_MESSAGE_BY_CODE: Record<string, string> = {
     '분석이 예상보다 오래 걸려 중단됐어요. 잠시 후 다시 시도해주세요.',
   TEMP_EXPENSE_PARSE_TIMEOUT:
     '분석이 예상보다 오래 걸려 중단됐어요. 잠시 후 다시 시도해주세요.',
+  FAILED_TIMEOUT:
+    '분석이 예상보다 오래 걸려 중단됐어요. 잠시 후 다시 시도해주세요.',
   '503_TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE':
     '분석 서버가 일시적으로 혼잡해요. 잠시 후 다시 시도해주세요.',
   TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE:
+    '분석 서버가 일시적으로 혼잡해요. 잠시 후 다시 시도해주세요.',
+  SERVICE_UNAVAILABLE:
     '분석 서버가 일시적으로 혼잡해요. 잠시 후 다시 시도해주세요.',
   INTERNAL_SERVER_ERROR: '분석을 완료하지 못했어요. 잠시 후 다시 시도해주세요.',
 };
