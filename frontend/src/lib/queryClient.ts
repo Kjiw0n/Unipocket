@@ -8,20 +8,42 @@ import { ApiError } from '@/api/config/error';
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
-      if (error instanceof ApiError && error.status === HTTP_STATUS.UNAUTHORIZED) return;
-      if (error instanceof ApiError && error.status === HTTP_STATUS.NETWORK_ERROR) {
-        toast.error('인터넷 연결을 확인해주세요.');
+      if (
+        error instanceof ApiError &&
+        error.status === HTTP_STATUS.UNAUTHORIZED
+      )
+        return;
+
+      const isBoundaryHandled =
+        query.meta?.suppressErrorToast === true &&
+        query.state.data === undefined;
+
+      if (
+        error instanceof ApiError &&
+        error.status === HTTP_STATUS.NETWORK_ERROR
+      ) {
+        if (!isBoundaryHandled) toast.error('인터넷 연결을 확인해주세요.');
         return;
       }
+
       Sentry.captureException(error);
+      if (isBoundaryHandled) return;
+
       const errorMessage = query.meta?.errorMessage as string;
       toast.error(errorMessage || '데이터를 불러오는데 실패했습니다.');
     },
   }),
   mutationCache: new MutationCache({
     onError: (error, _vars, _ctx, mutation) => {
-      if (error instanceof ApiError && error.status === HTTP_STATUS.UNAUTHORIZED) return;
-      if (error instanceof ApiError && error.status === HTTP_STATUS.NETWORK_ERROR) {
+      if (
+        error instanceof ApiError &&
+        error.status === HTTP_STATUS.UNAUTHORIZED
+      )
+        return;
+      if (
+        error instanceof ApiError &&
+        error.status === HTTP_STATUS.NETWORK_ERROR
+      ) {
         toast.error('인터넷 연결을 확인해주세요.');
         return;
       }

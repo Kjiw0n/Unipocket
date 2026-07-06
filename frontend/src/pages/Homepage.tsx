@@ -1,9 +1,10 @@
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import WidgetList from '@/components/chart/widget/components/WidgetList';
 import WidgetPicker from '@/components/chart/widget/components/WidgetPicker';
 import { useWidgetManager } from '@/components/chart/widget/hook/useWidgetManager';
 import { WidgetContext } from '@/components/chart/widget/WidgetContext';
+import { QueryBoundary } from '@/components/common/QueryBoundary';
 import ExpenseTable from '@/components/home-page/ExpenseTable';
 import HomeHeader from '@/components/home-page/HomeHeader';
 import ExpandableSheet from '@/components/layout/ExpandableSheet';
@@ -38,9 +39,13 @@ const Homepage = () => {
               collapsedHeight="100%"
               expandedHeight="93vh"
             >
-              <Suspense fallback={<Skeleton className="h-100 w-full" />}>
+              <QueryBoundary
+                pendingFallback={<Skeleton className="h-100 w-full" />}
+                errorTitle="지출 내역을 불러오지 못했어요"
+                resetKeys={[accountBook?.accountBookId]}
+              >
                 <ExpenseTable key={accountBook?.accountBookId} />
-              </Suspense>
+              </QueryBoundary>
             </ExpandableSheet>
           )}
         </div>

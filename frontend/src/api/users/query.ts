@@ -33,6 +33,7 @@ const userQueryOptions = queryOptions({
   queryKey: userKeys.me(),
   queryFn: getUser,
   staleTime: 1000 * 60 * 5, // 5분
+  meta: { suppressErrorToast: true },
 });
 
 const cardsQueryOptions = queryOptions({

@@ -1,10 +1,11 @@
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 
 import WidgetList from '@/components/chart/widget/components/WidgetList';
 import WidgetPicker from '@/components/chart/widget/components/WidgetPicker';
 import { useTravelWidgetManager } from '@/components/chart/widget/hook/useTravelWidgetManager';
 import { WidgetContext } from '@/components/chart/widget/WidgetContext';
+import { QueryBoundary } from '@/components/common/QueryBoundary';
 import BottomSheet from '@/components/layout/BottomSheet';
 import ExpandableSheet from '@/components/layout/ExpandableSheet';
 import ExpenseTable from '@/components/travel-page/ExpenseTable';
@@ -39,11 +40,14 @@ const TravelDetailPage = () => {
               collapsedHeight="100%"
               expandedHeight="93vh"
             >
-              <Suspense fallback={<Skeleton className="h-100 w-full" />}>
+              <QueryBoundary
+                pendingFallback={<Skeleton className="h-100 w-full" />}
+                errorTitle="지출 내역을 불러오지 못했어요"
+              >
                 <ExpenseTable
                   onOpenBottomSheet={() => setBottomSheetOpen(true)}
                 />
-              </Suspense>
+              </QueryBoundary>
             </ExpandableSheet>
           )}
         </div>
@@ -52,9 +56,12 @@ const TravelDetailPage = () => {
           isOpen={isBottomSheetOpen}
           onClose={() => setBottomSheetOpen(false)}
         >
-          <Suspense fallback={<Skeleton className="h-100 w-full" />}>
+          <QueryBoundary
+            pendingFallback={<Skeleton className="h-100 w-full" />}
+            errorTitle="가져올 지출 내역을 불러오지 못했어요"
+          >
             <ImportExpenseTable onClose={() => setBottomSheetOpen(false)} />
-          </Suspense>
+          </QueryBoundary>
         </BottomSheet>
       </div>
     </WidgetContext.Provider>

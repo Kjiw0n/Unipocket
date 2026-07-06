@@ -1,7 +1,7 @@
-import { Suspense } from 'react';
 import { useRouter } from '@tanstack/react-router';
 
 import Icon from '@/components/common/Icon';
+import { QueryBoundary } from '@/components/common/QueryBoundary';
 import {
   AccountBookConfigurator,
   ConfiguratorSkeleton,
@@ -42,13 +42,19 @@ const SettingPage = () => {
         <h1 className="title2-semibold text-label-normal">설정</h1>
       </div>
       <div className="flex flex-1 flex-col gap-3.5">
-        <Suspense fallback={<LinkedCardListSkeleton />}>
+        <QueryBoundary
+          pendingFallback={<LinkedCardListSkeleton />}
+          errorTitle="국내카드 연동 목록을 불러오지 못했어요"
+        >
           <LinkedCardList
             openEditCardNickname={openEditCardNickname}
             openDeleteCard={openDeleteCard}
           />
-        </Suspense>
-        <Suspense fallback={<ConfiguratorSkeleton />}>
+        </QueryBoundary>
+        <QueryBoundary
+          pendingFallback={<ConfiguratorSkeleton />}
+          errorTitle="가계부 설정을 불러오지 못했어요"
+        >
           <AccountBookConfigurator
             openEditAccountBookName={openEditAccountBookName}
             openDeleteAccountBook={openDeleteAccountBook}
@@ -57,7 +63,7 @@ const SettingPage = () => {
             openEditLocalCurrency={openEditLocalCurrency}
             openCreateAccountBook={openCreateAccountBook}
           />
-        </Suspense>
+        </QueryBoundary>
         <AccountManagement openDeleteAccount={openDeleteAccount} />
       </div>
 
