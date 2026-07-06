@@ -45,3 +45,11 @@ backend/mysql_data_multi
 backend/mysql_data
 backend/src/main/resources/application-local.yml
 backend/src/main/resources/application-local-test.yml
+
+### Deploy secrets/artifacts ###
+backend/deploy/.env
+backend/deploy/app.jar
+.local/
+
+### Tooling state ###
+.omc/
