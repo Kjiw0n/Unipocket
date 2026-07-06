@@ -15,6 +15,10 @@ public class CookieUtil {
 	@Value("${app.cookie.secure:false}")
 	private boolean cookieSecure;
 
+	// 크로스 도메인(프론트/백엔드 도메인 분리) 환경에서는 None 필요. 기본값은 Lax(동일 출처/프록시).
+	@Value("${app.cookie.same-site:Lax}")
+	private String cookieSameSite;
+
 	public void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
 		addCookie(response, name, value, maxAge, "/");
 	}
@@ -27,7 +31,7 @@ public class CookieUtil {
 						.path(cookiePath)
 						.maxAge(maxAge)
 						.httpOnly(true)
-						.sameSite("Lax")
+						.sameSite(cookieSameSite)
 						.secure(cookieSecure);
 
 		if (cookieDomain != null && !cookieDomain.isBlank()) {
@@ -48,7 +52,7 @@ public class CookieUtil {
 						.path(cookiePath)
 						.maxAge(0)
 						.httpOnly(true)
-						.sameSite("Lax")
+						.sameSite(cookieSameSite)
 						.secure(cookieSecure);
 
 		if (cookieDomain != null && !cookieDomain.isBlank()) {

@@ -71,6 +71,7 @@ app:
   cookie:
     domain: ${COOKIE_DOMAIN}
     secure: true
+    same-site: ${COOKIE_SAME_SITE:Lax}
 
 # Logging
 logging:
