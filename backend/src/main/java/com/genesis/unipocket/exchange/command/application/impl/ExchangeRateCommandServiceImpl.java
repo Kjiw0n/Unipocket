@@ -23,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.DeadlockLoserDataAccessException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -39,6 +42,11 @@ public class ExchangeRateCommandServiceImpl implements ExchangeRateCommandServic
 	private static final int MAX_UPSERT_RETRY = 3;
 	private static final int MIN_RETRY_BACKOFF_MS = 20;
 	private static final int MAX_RETRY_BACKOFF_MS = 100;
+
+	// Yahoo가 기본 Java UA를 봇으로 차단(429)함. 데이터센터 IP에서는 Chrome 토큰이 포함된
+	// UA도 위장으로 판정해 차단하므로, 검증된 단순 Mozilla UA를 사용해야 함
+	private static final String BROWSER_USER_AGENT =
+			"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36";
 
 	@Value("${exchange.yahoo.chart-url:https://query1.finance.yahoo.com/v8/finance/chart/{symbol}}")
 	private String yahooChartUrl = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}";
@@ -204,9 +212,19 @@ public class ExchangeRateCommandServiceImpl implements ExchangeRateCommandServic
 						.buildAndExpand(symbol)
 						.toUriString();
 
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.set(HttpHeaders.USER_AGENT, BROWSER_USER_AGENT);
+
 		String responseBody;
 		try {
-			responseBody = restTemplate.getForObject(url, String.class);
+			responseBody =
+					restTemplate
+							.exchange(
+									url,
+									HttpMethod.GET,
+									new HttpEntity<Void>(requestHeaders),
+									String.class)
+							.getBody();
 		} catch (Exception e) {
 			log.error(
 					"Yahoo rate request failed. currency={}, startDate={}, endDate={}",
