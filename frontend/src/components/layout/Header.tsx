@@ -1,7 +1,8 @@
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMatchRoute } from '@tanstack/react-router';
 
 import ProfilePopover from '@/components/common/ProfilePopover';
+import { QueryBoundary } from '@/components/common/QueryBoundary';
 import AccountBookSelector from '@/components/layout/AccountBookSelector';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -25,16 +26,26 @@ const Header = () => {
     <div className="border-line-solid-normal z-header sticky top-0 flex justify-between border-b px-8 py-3">
       <div className="flex items-center">
         {!isInitPath && (
-          <Suspense fallback={<Skeleton className="h-10 w-40" />}>
+          <QueryBoundary
+            pendingFallback={<Skeleton className="h-10 w-40" />}
+            errorTitle="가계부 목록을 불러오지 못했어요"
+            variant="inline"
+          >
             <AccountBookSelector />
-          </Suspense>
+          </QueryBoundary>
         )}
       </div>
       <div className="flex items-center gap-5">
         {!isInitPath && (
           <span className="label2-medium text-label-neutral">{time}</span>
         )}
-        <ProfilePopover />
+        <QueryBoundary
+          pendingFallback={<Skeleton className="h-10 w-10 rounded-full" />}
+          errorTitle="프로필을 불러오지 못했어요"
+          variant="inline"
+        >
+          <ProfilePopover />
+        </QueryBoundary>
       </div>
     </div>
   );
