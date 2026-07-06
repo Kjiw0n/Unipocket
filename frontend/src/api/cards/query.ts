@@ -24,6 +24,7 @@ export const useCardsSuspenseQuery = () =>
     queryKey: ['cards'],
     queryFn: getCards,
     staleTime: 1000 * 30,
+    meta: { suppressErrorToast: true },
   });
 
 export const useCardsQuery = () =>

@@ -183,6 +183,7 @@ const expensesQueryOptions = (
   queryOptions({
     queryKey: expenseKeys.list(accountBookId, filter),
     queryFn: () => getExpenses(accountBookId, filter),
+    meta: { suppressErrorToast: true },
   });
 
 /** 지출 내역 목록 조회 (Suspense) */
