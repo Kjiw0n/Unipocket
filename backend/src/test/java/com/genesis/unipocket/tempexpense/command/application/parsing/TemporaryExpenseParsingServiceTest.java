@@ -806,4 +806,90 @@ class TemporaryExpenseParsingServiceTest {
 						eq("INTERNAL_SERVER_ERROR"),
 						eq("temp/internal.jpg"));
 	}
+
+	@Test
+	@DisplayName("Gemini 타임아웃 실패는 timeout 에러 코드와 progress 코드로 발행한다")
+	void parseBatchFiles_publishesTimeoutErrorCode() {
+		Long accountBookId = 1L;
+		File file =
+				File.builder()
+						.fileId(24L)
+						.tempExpenseMetaId(240L)
+						.fileType(File.FileType.CSV)
+						.s3Key("temp/timeout.csv")
+						.build();
+		TempExpenseMeta meta =
+				TempExpenseMeta.builder()
+						.tempExpenseMetaId(240L)
+						.accountBookId(accountBookId)
+						.build();
+
+		when(accountBookRateInfoProvider.getRateInfo(accountBookId))
+				.thenReturn(
+						new AccountBookRateInfo(
+								CurrencyCode.KRW, CurrencyCode.USD, CountryCode.US));
+		when(temporaryExpenseParseClient.parse(file))
+				.thenReturn(
+						new GeminiService.GeminiParseResponse(
+								false, List.of(), "Read timed out", 408));
+
+		service.parseBatchFiles(meta, List.of(file), "task-timeout");
+
+		verify(progressPublisher)
+				.publishProgress(
+						eq("task-timeout"),
+						eq(100),
+						eq("FAILED: temp/timeout.csv (408_TEMP_EXPENSE_PARSE_TIMEOUT)"),
+						eq("FAILED_TIMEOUT"),
+						eq("temp/timeout.csv"));
+		verify(progressPublisher)
+				.publishError(
+						eq("task-timeout"), eq(ErrorCode.TEMP_EXPENSE_PARSE_TIMEOUT), anyString());
+		verify(progressPublisher, never()).complete(eq("task-timeout"));
+	}
+
+	@Test
+	@DisplayName("Gemini 503 실패는 service unavailable 에러 코드와 progress 코드로 발행한다")
+	void parseBatchFiles_publishesServiceUnavailableErrorCode() {
+		Long accountBookId = 1L;
+		File file =
+				File.builder()
+						.fileId(25L)
+						.tempExpenseMetaId(250L)
+						.fileType(File.FileType.IMAGE)
+						.s3Key("temp/high-demand.jpg")
+						.build();
+		TempExpenseMeta meta =
+				TempExpenseMeta.builder()
+						.tempExpenseMetaId(250L)
+						.accountBookId(accountBookId)
+						.build();
+
+		when(accountBookRateInfoProvider.getRateInfo(accountBookId))
+				.thenReturn(
+						new AccountBookRateInfo(
+								CurrencyCode.KRW, CurrencyCode.USD, CountryCode.US));
+		when(temporaryExpenseParseClient.parse(file))
+				.thenReturn(
+						new GeminiService.GeminiParseResponse(
+								false, List.of(), "high demand", 503));
+
+		service.parseBatchFiles(meta, List.of(file), "task-service-unavailable");
+
+		verify(progressPublisher)
+				.publishProgress(
+						eq("task-service-unavailable"),
+						eq(100),
+						eq(
+								"FAILED: temp/high-demand.jpg"
+										+ " (503_TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE)"),
+						eq("SERVICE_UNAVAILABLE"),
+						eq("temp/high-demand.jpg"));
+		verify(progressPublisher)
+				.publishError(
+						eq("task-service-unavailable"),
+						eq(ErrorCode.TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE),
+						anyString());
+		verify(progressPublisher, never()).complete(eq("task-service-unavailable"));
+	}
 }

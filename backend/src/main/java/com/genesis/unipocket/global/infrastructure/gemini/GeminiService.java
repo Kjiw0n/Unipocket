@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -124,6 +125,9 @@ public class GeminiService {
 			log.error("Gemini API returned non-2xx status: {}", e.getStatusCode(), e);
 			return new GeminiParseResponse(
 					false, List.of(), e.getMessage(), e.getStatusCode().value());
+		} catch (ResourceAccessException e) {
+			log.error("Gemini API request timed out or failed to connect", e);
+			return new GeminiParseResponse(false, List.of(), e.getMessage(), 408);
 		} catch (RestClientException e) {
 			log.error("Failed to call Gemini API", e);
 			return new GeminiParseResponse(false, List.of(), e.getMessage());
@@ -163,6 +167,9 @@ public class GeminiService {
 			log.error("Gemini API returned non-2xx status: {}", e.getStatusCode(), e);
 			return new GeminiParseResponse(
 					false, List.of(), e.getMessage(), e.getStatusCode().value());
+		} catch (ResourceAccessException e) {
+			log.error("Gemini API request timed out or failed to connect", e);
+			return new GeminiParseResponse(false, List.of(), e.getMessage(), 408);
 		} catch (RestClientException e) {
 			log.error("Failed to call Gemini API", e);
 			return new GeminiParseResponse(false, List.of(), e.getMessage());
@@ -345,6 +352,14 @@ public class GeminiService {
 
 		public boolean isRateLimited() {
 			return Integer.valueOf(429).equals(statusCode);
+		}
+
+		public boolean isTimeout() {
+			return Integer.valueOf(408).equals(statusCode);
+		}
+
+		public boolean isServiceUnavailable() {
+			return Integer.valueOf(503).equals(statusCode);
 		}
 	}
 

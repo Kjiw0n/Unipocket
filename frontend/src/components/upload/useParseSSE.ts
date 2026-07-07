@@ -17,6 +17,36 @@ interface ParseSSECallbacks {
   onError?: () => void;
 }
 
+const PARSE_ERROR_MESSAGE_BY_CODE: Record<string, string> = {
+  '429_TEMP_EXPENSE_PARSE_RATE_LIMIT':
+    '지금 분석 요청이 많아 완료하지 못했어요. 잠시 후 다시 시도해주세요.',
+  TEMP_EXPENSE_PARSE_RATE_LIMIT:
+    '지금 분석 요청이 많아 완료하지 못했어요. 잠시 후 다시 시도해주세요.',
+  FAILED_TOO_MANY_REQUEST:
+    '지금 분석 요청이 많아 완료하지 못했어요. 잠시 후 다시 시도해주세요.',
+  '408_TEMP_EXPENSE_PARSE_TIMEOUT':
+    '분석이 예상보다 오래 걸려 중단됐어요. 잠시 후 다시 시도해주세요.',
+  TEMP_EXPENSE_PARSE_TIMEOUT:
+    '분석이 예상보다 오래 걸려 중단됐어요. 잠시 후 다시 시도해주세요.',
+  FAILED_TIMEOUT:
+    '분석이 예상보다 오래 걸려 중단됐어요. 잠시 후 다시 시도해주세요.',
+  '503_TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE':
+    '분석 서버가 일시적으로 혼잡해요. 잠시 후 다시 시도해주세요.',
+  TEMP_EXPENSE_PARSE_SERVICE_UNAVAILABLE:
+    '분석 서버가 일시적으로 혼잡해요. 잠시 후 다시 시도해주세요.',
+  SERVICE_UNAVAILABLE:
+    '분석 서버가 일시적으로 혼잡해요. 잠시 후 다시 시도해주세요.',
+  INTERNAL_SERVER_ERROR: '분석을 완료하지 못했어요. 잠시 후 다시 시도해주세요.',
+};
+
+const DEFAULT_PARSE_ERROR_MESSAGE =
+  '분석을 완료하지 못했어요. 잠시 후 다시 시도해주세요.';
+
+const getParseErrorMessage = (code?: string) => {
+  if (!code) return DEFAULT_PARSE_ERROR_MESSAGE;
+  return PARSE_ERROR_MESSAGE_BY_CODE[code] ?? DEFAULT_PARSE_ERROR_MESSAGE;
+};
+
 export const useParseSSE = (accountBookId: number) => {
   const { addSnackbar, updateSnackbar, closeSnackbar, resetAll } =
     useParseSnackbarStore(
@@ -31,6 +61,8 @@ export const useParseSSE = (accountBookId: number) => {
   const eventSourcesRef = useRef<Record<string, EventSource>>({});
   const completedRef = useRef<Record<string, boolean>>({});
   const successCountRef = useRef<Record<string, number>>({});
+  const reconnectAttemptsRef = useRef<Record<string, number>>({});
+  const connectionStartedAtRef = useRef<Record<string, number>>({});
 
   const disconnect = (taskId: string) => {
     const es = eventSourcesRef.current[taskId];
@@ -39,6 +71,8 @@ export const useParseSSE = (accountBookId: number) => {
       delete eventSourcesRef.current[taskId];
     }
     delete successCountRef.current[taskId];
+    delete reconnectAttemptsRef.current[taskId];
+    delete connectionStartedAtRef.current[taskId];
   };
 
   const disconnectAll = () => {
@@ -64,6 +98,8 @@ export const useParseSSE = (accountBookId: number) => {
 
     eventSourcesRef.current[taskId] = eventSource;
     successCountRef.current[taskId] = 0;
+    reconnectAttemptsRef.current[taskId] = 0;
+    connectionStartedAtRef.current[taskId] = Date.now();
     completedRef.current[taskId] = false;
 
     addSnackbar({
@@ -112,7 +148,7 @@ export const useParseSSE = (accountBookId: number) => {
           callbacks?.onComplete?.();
         } else {
           closeSnackbar(taskId);
-          toast.error('모든 파일 분석에 실패했어요. 다시 시도해주세요.');
+          toast.error(getParseErrorMessage(code));
           callbacks?.onError?.();
         }
 
@@ -130,10 +166,85 @@ export const useParseSSE = (accountBookId: number) => {
     const handleSseEvent = (event: Event) => {
       try {
         const parsed = JSON.parse((event as MessageEvent).data);
+        reconnectAttemptsRef.current[taskId] = 0;
         handleProgressValue(parsed);
       } catch (error) {
-        Sentry.captureException(error);
-        toast.error('분석 진행 상태를 가져오는 중 문제가 발생했어요. 다시 시도해주세요.');
+        Sentry.captureException(error, {
+          tags: {
+            parseType,
+            sseReadyState: eventSource.readyState,
+          },
+          extra: {
+            taskId,
+            accountBookId,
+            elapsedMs: Date.now() - connectionStartedAtRef.current[taskId],
+            reconnectAttempts: reconnectAttemptsRef.current[taskId] ?? 0,
+          },
+        });
+        toast.error(
+          '분석 진행 상태를 가져오는 중 문제가 발생했어요. 다시 시도해주세요.',
+        );
+        closeSnackbar(taskId);
+        callbacks?.onError?.();
+        disconnect(taskId);
+      }
+    };
+
+    const handleServerError = (event: Event) => {
+      if (!('data' in event)) return;
+
+      try {
+        const parsed = JSON.parse((event as MessageEvent).data) as {
+          message?: string;
+          code?: string;
+          status?: number;
+          lastCode?: string;
+          lastFileKey?: string;
+        };
+
+        completedRef.current[taskId] = true;
+        reconnectAttemptsRef.current[taskId] = 0;
+
+        if (parsed.lastFileKey && parsed.lastCode !== 'SUCCESS') {
+          callbacks?.onFileFailed?.(parsed.lastFileKey);
+        }
+
+        Sentry.addBreadcrumb({
+          category: 'sse.parse',
+          level: 'info',
+          message: 'Server sent parsing error event',
+          data: {
+            taskId,
+            accountBookId,
+            parseType,
+            code: parsed.code,
+            status: parsed.status,
+            lastCode: parsed.lastCode,
+            lastFileKey: parsed.lastFileKey,
+            elapsedMs: Date.now() - connectionStartedAtRef.current[taskId],
+          },
+        });
+
+        toast.error(getParseErrorMessage(parsed.code));
+        closeSnackbar(taskId);
+        callbacks?.onError?.();
+        disconnect(taskId);
+      } catch (error) {
+        Sentry.captureException(error, {
+          tags: {
+            parseType,
+            sseReadyState: eventSource.readyState,
+          },
+          extra: {
+            taskId,
+            accountBookId,
+            elapsedMs: Date.now() - connectionStartedAtRef.current[taskId],
+            reconnectAttempts: reconnectAttemptsRef.current[taskId] ?? 0,
+          },
+        });
+        toast.error(
+          '분석 진행 상태를 가져오는 중 문제가 발생했어요. 다시 시도해주세요.',
+        );
         closeSnackbar(taskId);
         callbacks?.onError?.();
         disconnect(taskId);
@@ -142,15 +253,47 @@ export const useParseSSE = (accountBookId: number) => {
 
     eventSource.addEventListener('progress', handleSseEvent);
     eventSource.addEventListener('complete', handleSseEvent);
+    eventSource.addEventListener('error', handleServerError);
 
     eventSource.onerror = () => {
-      if (!completedRef.current[taskId]) {
-        Sentry.captureException(new Error('SSE connection error'));
-        toast.error('분석 중 연결이 끊어졌어요. 다시 시도해주세요.');
+      if (completedRef.current[taskId]) {
+        disconnect(taskId);
+        return;
+      }
+
+      const reconnectAttempts = (reconnectAttemptsRef.current[taskId] ?? 0) + 1;
+      reconnectAttemptsRef.current[taskId] = reconnectAttempts;
+
+      if (
+        eventSource.readyState === EventSource.CONNECTING &&
+        reconnectAttempts < 3
+      ) {
+        return;
+      }
+
+      if (
+        eventSource.readyState === EventSource.CLOSED ||
+        reconnectAttempts >= 3
+      ) {
+        Sentry.captureException(new Error('SSE connection error'), {
+          tags: {
+            parseType,
+            sseReadyState: eventSource.readyState,
+          },
+          extra: {
+            taskId,
+            accountBookId,
+            elapsedMs: Date.now() - connectionStartedAtRef.current[taskId],
+            reconnectAttempts,
+          },
+        });
+        toast.error(
+          '분석 중 연결이 끊겼어요. 네트워크를 확인하고 다시 시도해주세요.',
+        );
         closeSnackbar(taskId);
         callbacks?.onError?.();
+        disconnect(taskId);
       }
-      disconnect(taskId);
     };
   };
 
