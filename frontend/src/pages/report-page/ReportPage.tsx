@@ -2,7 +2,10 @@ import { useState } from 'react';
 
 import { useAutoFitScaleToViewport } from '@/hooks/useAutoFitScale';
 
+import { QueryBoundary } from '@/components/common/QueryBoundary';
 import PageHeader from '@/components/layout/PageHeader';
+import ReportInsight from '@/components/report-page/insight/ReportInsight';
+import ReportInsightSkeleton from '@/components/report-page/insight/ReportInsightSkeleton';
 import ReportControlSection from '@/components/report-page/ReportControlSection';
 import ReportSection from '@/components/report-page/ReportSection';
 
@@ -52,6 +55,7 @@ const ReportPage = () => {
 
   const { ref, scale } = useAutoFitScaleToViewport<HTMLDivElement>(16, 0.9, [
     data,
+    isPlaceholderData,
   ]);
 
   return (
@@ -75,14 +79,31 @@ const ReportPage = () => {
         />
 
         {data && (
-          <ReportSection
-            key={`${year}-${month}-${currencyType}`}
-            data={data}
-            currencyType={currencyType}
-            onCurrencyTypeChange={setCurrencyType}
-            isCurrentMonth={isCurrentMonth}
-            isPlaceholderData={isPlaceholderData}
-          />
+          <>
+            <QueryBoundary
+              errorTitle="소비 인사이트를 불러오지 못했어요"
+              pendingFallback={<ReportInsightSkeleton />}
+              resetKeys={[accountBookId, year, month, currencyType]}
+            >
+              <ReportInsight
+                analysis={data}
+                year={year}
+                month={month}
+                isCurrentMonth={isCurrentMonth}
+                isPlaceholderData={isPlaceholderData}
+                currencyType={currencyType}
+              />
+            </QueryBoundary>
+
+            <ReportSection
+              key={`${year}-${month}-${currencyType}`}
+              data={data}
+              currencyType={currencyType}
+              onCurrencyTypeChange={setCurrencyType}
+              isCurrentMonth={isCurrentMonth}
+              isPlaceholderData={isPlaceholderData}
+            />
+          </>
         )}
       </div>
     </div>
