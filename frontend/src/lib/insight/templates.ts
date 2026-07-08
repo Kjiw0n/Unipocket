@@ -103,7 +103,7 @@ const templates: Record<InsightRuleId, Template[]> = {
         '현금 지출은 기록 누락이 쉬우니 한 번 더 확인해보세요.',
     },
     {
-      title: (p) => `결제 수단 흐름이 현금 쪽으로 ${p.delta}%p 움직였어요`,
+      title: (p) => `결제 수단에서 현금 비중이 ${p.delta}%p ${p.direction}`,
       emphasis: (p) => [`${p.delta}%p`],
       description: (p) => `지난달보다 현금 비중이 ${p.direction}.`,
     },
@@ -186,6 +186,13 @@ const templates: Record<InsightRuleId, Template[]> = {
       title: (p) => `지출을 ${p.count}건만 더 기록하면 인사이트가 열려요`,
       emphasis: (p) => [`${p.count}건`],
       description: () => '아직 데이터가 조금 부족해요.',
+    },
+  ],
+  'no-insight-fallback': [
+    {
+      title: () => '이번 달 소비 흐름이 안정적이에요',
+      emphasis: () => ['안정적'],
+      description: () => '눈에 띄는 변화가 생기면 바로 알려드릴게요.',
     },
   ],
 };

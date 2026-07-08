@@ -19,7 +19,8 @@ export type InsightRuleId =
   | 'uncategorized-nudge'
   | 'small-frequent'
   | 'category-saving'
-  | 'starter-fallback';
+  | 'starter-fallback'
+  | 'no-insight-fallback';
 
 export interface NormalizedExpense {
   amount: number;

@@ -37,4 +37,19 @@ describe('Insight Templates', () => {
 
     expect(result.description).toContain('일부 데이터 기준');
   });
+
+  it('현금 비중 감소 템플릿은 제목에도 감소 방향을 반영한다', () => {
+    const result = renderInsightTemplate(
+      buildCandidate({
+        ruleId: 'cash-card-shift',
+        params: { delta: 15, direction: '줄었어요' },
+      }),
+      2026,
+      8,
+    );
+
+    expect(result.segments.map((segment) => segment.text).join('')).toBe(
+      '결제 수단에서 현금 비중이 15%p 줄었어요',
+    );
+  });
 });

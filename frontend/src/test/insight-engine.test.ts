@@ -18,6 +18,28 @@ describe('Insight Engine', () => {
     expect(insights[0].ruleId).toBe('starter-fallback');
   });
 
+  it('거래가 5건 이상인데 발동한 룰이 없으면 starter fallback을 반환하지 않는다', () => {
+    const insights = runInsightEngine(
+      buildInput({
+        isCurrentMonth: false,
+        thisMonthExpenses: Array.from({ length: 5 }, (_, index) =>
+          buildNormalizedExpense({
+            amount: 100,
+            category: 2,
+            occurredAt: new Date(2026, 6, index + 1),
+            merchantName: `식당${index}`,
+          }),
+        ),
+      }),
+    );
+
+    expect(insights).toHaveLength(1);
+    expect(insights[0].ruleId).toBe('no-insight-fallback');
+    expect(insights[0].segments.map((segment) => segment.text).join('')).toBe(
+      '이번 달 소비 흐름이 안정적이에요',
+    );
+  });
+
   it('카테고리가 같은 인사이트는 높은 점수 1개만 남긴다', () => {
     const insights = runInsightEngine(
       buildInput({

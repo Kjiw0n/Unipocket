@@ -33,6 +33,13 @@ const RAW_EXPENSE_DEPENDENT_RULES = new Set([
   'small-frequent',
 ]);
 
+const NO_INSIGHT_FALLBACK: InsightCandidate = {
+  ruleId: 'no-insight-fallback',
+  severity: 'info',
+  magnitude: 0.1,
+  params: {},
+};
+
 const meetsRequirement = (rule: InsightRule, input: InsightInput): boolean => {
   const requirement = rule.minDataRequirement;
   if (
@@ -138,8 +145,7 @@ export const runInsightEngine = (input: InsightInput): Insight[] => {
 
   const ranked = applyPositiveMix(suppressDuplicateCategory(insights));
   if (ranked.length === 0) {
-    const fallback = FALLBACK_RULE?.evaluate(input);
-    return fallback ? [attachTemplate(fallback, input)] : [];
+    return [attachTemplate(NO_INSIGHT_FALLBACK, input)];
   }
 
   return ranked.slice(0, 3);
