@@ -9,7 +9,7 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
   {
-    ignores: ['dist'],
+    ignores: ['dist', '.next', 'next-env.d.ts'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -20,6 +20,12 @@ export default defineConfig([
   {
     files: ['**/*.{ts,tsx}'],
     ...reactRefresh.configs.vite,
+  },
+  {
+    files: ['src/app/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -41,7 +47,7 @@ export default defineConfig([
             ['^@/apis'],
             ['^@/hooks'],
             ['^@/components'],
-            ['^@/pages'],
+            ['^@/screens'],
             ['^@/utils', '^@/types'],
             ['^@/'], // absolute alias
             ['^\\.'], // relative

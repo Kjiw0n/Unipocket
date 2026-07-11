@@ -1,6 +1,6 @@
 import Switch from '@/components/common/Switch';
 
-import { getNavButtonClass } from '@/pages/report-page/report.utils';
+import { getNavButtonClass } from '@/screens/report-page/report.utils';
 
 import type { CurrencyType } from '@/types/currency';
 
