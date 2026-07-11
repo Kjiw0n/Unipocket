@@ -13,6 +13,16 @@ import { requireAuth } from '@/api/auth/api';
 import { useAccountBookStore } from '@/stores/accountBookStore';
 import { useRefreshStore } from '@/stores/refreshStore';
 
+async function requireAuthRoute() {
+  const result = await requireAuth();
+
+  if (result.kind === 'redirect') {
+    throw redirect({ to: result.to });
+  }
+
+  return result.user;
+}
+
 export const Route = createFileRoute('/_app')({
   beforeLoad: async ({ context, location }) => {
     const { queryClient } = context;
@@ -36,7 +46,7 @@ export const Route = createFileRoute('/_app')({
     storedDetailPromise?.catch(() => {});
     storedAmountPromise?.catch(() => {});
 
-    const user = await requireAuth();
+    const user = await requireAuthRoute();
 
     if (user?.needsOnboarding) {
       if (location.pathname !== '/init') {
