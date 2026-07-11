@@ -1,12 +1,14 @@
 import * as Sentry from '@sentry/react';
 
+import { APP_ENV, IS_PROD, SENTRY_DSN } from '@/config/env';
+
 export function initSentry() {
   Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN,
+    dsn: SENTRY_DSN,
     integrations: [Sentry.browserTracingIntegration()],
-    tracesSampleRate: import.meta.env.PROD ? 1.0 : 0,
+    tracesSampleRate: IS_PROD ? 1.0 : 0,
     replaysOnErrorSampleRate: 1.0,
-    environment: import.meta.env.MODE,
+    environment: APP_ENV,
   });
 
   // 로드 완료 전에 발생한 에러에는 리플레이 없음 (에러 캡처 자체는 init부터 동작)

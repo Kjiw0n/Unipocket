@@ -1,4 +1,3 @@
-/// <reference types="vitest" />
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
@@ -45,11 +44,6 @@ export default defineConfig(({ mode }) => {
       sourcemap: mode === 'production' ? 'hidden' : false,
     },
     resolve: {
-      alias: [{ find: '@', replacement: '/src' }],
-    },
-    test: {
-      globals: true,
-      environment: 'node',
       alias: [{ find: '@', replacement: '/src' }],
     },
     server: {

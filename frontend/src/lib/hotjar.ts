@@ -1,5 +1,7 @@
+import { CONTENTSQUARE_KEY } from '@/config/env';
+
 export function initHotjar() {
-  const key = import.meta.env.VITE_CONTENTSQUARE_KEY;
+  const key = CONTENTSQUARE_KEY;
   if (!key) return;
 
   const load = () => {

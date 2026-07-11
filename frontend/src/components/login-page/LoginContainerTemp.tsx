@@ -3,15 +3,14 @@ import { toast } from 'sonner';
 
 import { loginDev } from '@/api/auth/api';
 import { AuthLogos } from '@/assets';
+import { COOKIE_DOMAIN, IS_PROD } from '@/config/env';
 
 const LoginContainerTemp = () => {
   const navigate = useNavigate();
   const handleOnClick = async () => {
     try {
       const { accessToken, refreshToken, expiresIn } = await loginDev();
-      const domain = import.meta.env.PROD
-        ? `domain=${import.meta.env.VITE_COOKIE_DOMAIN}; `
-        : '';
+      const domain = IS_PROD ? `domain=${COOKIE_DOMAIN}; ` : '';
       const baseOptions = `path=/; ${domain}Secure; SameSite=None; `;
       const REFRESH_EXPIRY = 30 * 24 * 60 * 60;
       document.cookie = `access_token=${accessToken}; max-age=${expiresIn}; ${baseOptions}`;

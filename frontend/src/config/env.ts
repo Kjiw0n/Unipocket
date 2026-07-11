@@ -1,0 +1,9 @@
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const CDN_URL = import.meta.env.VITE_CDN_URL;
+export const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
+export const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+export const CONTENTSQUARE_KEY = import.meta.env.VITE_CONTENTSQUARE_KEY;
+export const COOKIE_DOMAIN = import.meta.env.VITE_COOKIE_DOMAIN;
+export const DEV_USER_ID = import.meta.env.VITE_USER_ID;
+export const IS_PROD = import.meta.env.PROD;
+export const APP_ENV = import.meta.env.MODE;
