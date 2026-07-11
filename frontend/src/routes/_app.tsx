@@ -48,7 +48,7 @@ export const Route = createFileRoute('/_app')({
 
     const user = await requireAuthRoute();
 
-    if (user?.needsOnboarding) {
+    if (user.needsOnboarding) {
       if (location.pathname !== '/init') {
         clearAccountBook();
         throw redirect({ to: '/init' });
