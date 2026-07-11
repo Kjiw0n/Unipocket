@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { useShallow } from 'zustand/react/shallow';
 
 import { ENDPOINTS } from '@/api/config/endpoint';
-import { API_BASE_URL } from '@/constants/env';
+import { API_BASE_URL } from '@/config/env';
 import { useParseSnackbarStore } from '@/stores/parseSnackbarStore';
 
 interface ParseSSECallbacks {

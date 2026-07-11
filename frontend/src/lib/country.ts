@@ -1,4 +1,4 @@
-import { CDN_URL } from '@/constants/env';
+import { CDN_URL } from '@/config/env';
 import { COUNTRY_CODE, type CountryCode } from '@/data/country/countryCode';
 import countryData from '@/data/country/countryData.json';
 import { COUNTRY_LOCALE_MAP } from '@/data/country/countryLocale';

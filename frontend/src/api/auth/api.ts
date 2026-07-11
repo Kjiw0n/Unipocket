@@ -3,7 +3,7 @@ import { customFetch } from '@/api/config/client';
 import { ENDPOINTS } from '@/api/config/endpoint';
 import { getUser } from '@/api/users/api';
 import type { User, UserStatus } from '@/api/users/type';
-import { DEV_USER_ID } from '@/constants/env';
+import { DEV_USER_ID } from '@/config/env';
 
 const INACTIVE_USER_STATUSES: UserStatus[] = ['BANNED', 'DELETED', 'INACTIVE'];
 

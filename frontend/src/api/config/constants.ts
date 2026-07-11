@@ -1,4 +1,4 @@
-export { API_BASE_URL } from '@/constants/env';
+export { API_BASE_URL } from '@/config/env';
 
 export const DEFAULT_TIMEOUT = 5000; // 5초
 

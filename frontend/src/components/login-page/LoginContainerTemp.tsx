@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { loginDev } from '@/api/auth/api';
 import { AuthLogos } from '@/assets';
-import { COOKIE_DOMAIN, IS_PROD } from '@/constants/env';
+import { COOKIE_DOMAIN, IS_PROD } from '@/config/env';
 
 const LoginContainerTemp = () => {
   const navigate = useNavigate();

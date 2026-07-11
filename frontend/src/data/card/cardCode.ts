@@ -1,4 +1,4 @@
-import { CDN_URL } from '@/constants/env';
+import { CDN_URL } from '@/config/env';
 
 export const CARDS = {
   0: {

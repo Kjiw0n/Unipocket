@@ -1,4 +1,4 @@
-import { CONTENTSQUARE_KEY } from '@/constants/env';
+import { CONTENTSQUARE_KEY } from '@/config/env';
 
 export function initHotjar() {
   const key = CONTENTSQUARE_KEY;

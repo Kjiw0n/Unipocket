@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 
-import { APP_ENV, IS_PROD, SENTRY_DSN } from '@/constants/env';
+import { APP_ENV, IS_PROD, SENTRY_DSN } from '@/config/env';
 
 export function initSentry() {
   Sentry.init({
