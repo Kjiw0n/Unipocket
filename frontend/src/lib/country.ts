@@ -1,3 +1,4 @@
+import { CDN_URL } from '@/constants/env';
 import { COUNTRY_CODE, type CountryCode } from '@/data/country/countryCode';
 import countryData from '@/data/country/countryData.json';
 import { COUNTRY_LOCALE_MAP } from '@/data/country/countryLocale';
@@ -12,8 +13,6 @@ export interface CountryInfo {
   currencyNameKor: string;
   currencyUnitKor: string;
 }
-
-const CDN_URL = import.meta.env.VITE_CDN_URL;
 
 export const getCountryInfo = (code: CountryCode): CountryInfo | null => {
   const data = countryData[code as keyof typeof countryData];

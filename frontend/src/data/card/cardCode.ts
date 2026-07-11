@@ -1,4 +1,4 @@
-const CDN_URL = import.meta.env.VITE_CDN_URL;
+import { CDN_URL } from '@/constants/env';
 
 export const CARDS = {
   0: {

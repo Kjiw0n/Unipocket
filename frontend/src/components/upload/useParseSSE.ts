@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { useShallow } from 'zustand/react/shallow';
 
 import { ENDPOINTS } from '@/api/config/endpoint';
+import { API_BASE_URL } from '@/constants/env';
 import { useParseSnackbarStore } from '@/stores/parseSnackbarStore';
 
 interface ParseSSECallbacks {
@@ -85,7 +86,7 @@ export const useParseSSE = (accountBookId: number) => {
     parseType: 'file' | 'image',
     callbacks?: ParseSSECallbacks,
   ) => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '');
+    const baseUrl = API_BASE_URL?.replace(/\/$/, '');
     if (!baseUrl) return;
 
     const endpoint = ENDPOINTS.TEMPORARY_EXPENSES.PARSE_STATUS(
