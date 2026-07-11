@@ -12,7 +12,7 @@ import ReportSection from '@/components/report-page/ReportSection';
 import {
   canGoToMonth,
   dateToYearMonth,
-} from '@/pages/report-page/report.utils';
+} from '@/screens/report-page/report.utils';
 
 import { type CurrencyType } from '@/types/currency';
 
