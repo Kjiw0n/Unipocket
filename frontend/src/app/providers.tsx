@@ -22,7 +22,7 @@ export function Providers({
     >
       <QueryClientProvider client={queryClient}>
         <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
-          <main className="bg-background-alternative h-full">{children}</main>
+          <div className="bg-background-alternative h-full">{children}</div>
           <ParseSnackbarContainer />
           <Toaster />
           <AnalyticsListener />

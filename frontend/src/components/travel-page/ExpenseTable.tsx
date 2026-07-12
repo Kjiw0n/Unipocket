@@ -19,7 +19,7 @@ interface ExpenseTableProps {
 }
 
 const ExpenseTable = ({ onOpenBottomSheet }: ExpenseTableProps) => {
-  const { travelId: travelIdParam } = useParams<{ travelId?: string }>();
+  const { travelId: travelIdParam } = useParams<{ travelId: string }>();
   const travelId = Number(travelIdParam);
 
   const { data, filter, updateFilter, totalPages } = useFilteredExpenses({

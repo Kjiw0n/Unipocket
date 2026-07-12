@@ -1,9 +1,10 @@
 import type { LoginResponse } from '@/api/auth/type';
 import { customFetch } from '@/api/config/client';
 import { ENDPOINTS } from '@/api/config/endpoint';
-import { getUser } from '@/api/users/api';
+import { userQueryOptions } from '@/api/users/query';
 import type { User, UserStatus } from '@/api/users/type';
 import { DEV_USER_ID } from '@/config/env';
+import { queryClient } from '@/lib/queryClient';
 
 const INACTIVE_USER_STATUSES: UserStatus[] = ['BANNED', 'DELETED', 'INACTIVE'];
 
@@ -35,7 +36,7 @@ export const loginDev = (): Promise<LoginResponse> => {
 };
 
 export const requireGuest = async (): Promise<GuestGuardResult> => {
-  const user = await getUser().catch(() => null); // 에러 발생 시 비회원으로 간주
+  const user = await queryClient.fetchQuery(userQueryOptions).catch(() => null); // 에러 발생 시 비회원으로 간주
 
   if (!user || INACTIVE_USER_STATUSES.includes(user.status)) {
     return { kind: 'ok', user };
@@ -48,7 +49,7 @@ export const requireGuest = async (): Promise<GuestGuardResult> => {
 };
 
 export const requireAuth = async (): Promise<AuthGuardResult> => {
-  const user = await getUser().catch(() => null);
+  const user = await queryClient.fetchQuery(userQueryOptions).catch(() => null);
 
   // 1. 비회원이거나 정지된 계정은 랜딩('/')으로 쫓아냄
   if (!user || INACTIVE_USER_STATUSES.includes(user.status)) {

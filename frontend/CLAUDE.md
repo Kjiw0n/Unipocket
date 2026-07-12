@@ -105,6 +105,8 @@ TanStack Router 파일 기반 라우팅. `routeTree.gen.ts`는 자동 생성 파
 
 각 도메인 폴더(`src/api/<domain>/`) 안에 `api.ts`(순수 fetch 함수), `query.ts`(TanStack Query 훅), `type.ts`(해당 도메인 타입 정의)를 분리한다.
 
+해당 엔티티에 이미 `queryOptions`가 있으면 raw `customFetch` 대신 `queryClient.fetchQuery`/`useQuery`로 캐시를 경유한다. 항상 최신값이 필요한 등 예외는 코드 주석으로 근거를 남긴다.
+
 ---
 
 ## 상태 관리

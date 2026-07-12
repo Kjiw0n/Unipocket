@@ -24,6 +24,8 @@ export function AuthGuard({
 
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 경로 전환 시 이전 화면 렌더를 막아야 한다.
+    setReady(false);
 
     async function guard() {
       const { accountBook, setAccountBook, clearAccountBook } =
