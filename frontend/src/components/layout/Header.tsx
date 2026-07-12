@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useMatchRoute } from '@tanstack/react-router';
+import { usePathname } from 'next/navigation';
 
 import ProfilePopover from '@/components/common/ProfilePopover';
 import { QueryBoundary } from '@/components/common/QueryBoundary';
 import AccountBookSelector from '@/components/layout/AccountBookSelector';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { getLocalTime } from '@/lib/utils';
+import { getLocalTime, isRouteActive } from '@/lib/utils';
 
 const Header = () => {
-  const matchRoute = useMatchRoute();
-  const isInitPath = !!matchRoute({ to: '/init' });
+  const pathname = usePathname();
+  const isInitPath = isRouteActive(pathname, '/init');
 
   const [time, setTime] = useState(getLocalTime('KR'));
 

@@ -4,8 +4,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@radix-ui/react-popover';
-import { Link, useMatchRoute } from '@tanstack/react-router';
 import { clsx } from 'clsx';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import Divider from '@/components/common/Divider';
 
@@ -13,14 +14,15 @@ import { useLogoutMutation } from '@/api/auth/query';
 import { useGetUserQuery } from '@/api/users/query';
 import ProfileImage from '@/assets/images/profile.png';
 import { AUTH_PROVIDERS } from '@/constants/authProviders';
+import { isRouteActive } from '@/lib/utils';
 
 const ProfilePopover = () => {
   const { data } = useGetUserQuery();
 
   const logoutMutation = useLogoutMutation();
 
-  const matchRoute = useMatchRoute();
-  const isInitPath = !!matchRoute({ to: '/init' });
+  const pathname = usePathname();
+  const isInitPath = isRouteActive(pathname, '/init');
 
   const isGoogleUser = data.profileImgUrl?.includes('googleusercontent');
   const authProvider = AUTH_PROVIDERS.find(
@@ -43,7 +45,7 @@ const ProfilePopover = () => {
               data.profileImgUrl
                 ?.replace(/^http:\/\//, 'https://')
                 // 카카오 썸네일 스펙(R640x640.q70 등)을 표시 크기에 맞는 110x110으로 교체
-                .replace('640x640', '110x110') || ProfileImage
+                .replace('640x640', '110x110') || ProfileImage.src
             }
             alt=""
             className="h-8 w-8 cursor-pointer rounded-full object-cover"
@@ -87,7 +89,7 @@ const ProfilePopover = () => {
           <PopoverClose asChild>
             {!isInitPath && (
               <Link
-                to={'/setting'}
+                href="/setting"
                 className="body2-normal-medium text-label-alternative"
               >
                 설정

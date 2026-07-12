@@ -1,8 +1,11 @@
-import { Link, useMatchRoute, useRouter } from '@tanstack/react-router';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import MenuItem from '@/components/layout/menu/MenuItem';
 
 import { Icons } from '@/assets';
+import { queryClient } from '@/lib/queryClient';
+import { isRouteActive } from '@/lib/utils';
 import { useRefreshStore } from '@/stores/refreshStore';
 
 const menuItems = [
@@ -12,19 +15,18 @@ const menuItems = [
 ] as const;
 
 const Menu = () => {
-  const matchRoute = useMatchRoute();
-  const router = useRouter();
+  const pathname = usePathname();
   const triggerRefresh = useRefreshStore((s) => s.triggerRefresh);
 
-  const isInitPath = !!matchRoute({ to: '/init' });
+  const isInitPath = isRouteActive(pathname, '/init');
 
   const handleRefreshClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     to: string,
   ) => {
-    if (matchRoute({ to, fuzzy: true })) {
+    if (isRouteActive(pathname, to, true)) {
       e.preventDefault();
-      router.invalidate();
+      void queryClient.invalidateQueries();
       triggerRefresh();
     }
   };
@@ -32,7 +34,7 @@ const Menu = () => {
   return (
     <nav className="border-line-normal-normal bg-background-normal sticky top-0 bottom-0 left-0 flex w-16 flex-col items-center gap-9 border-r px-4 py-3">
       <Link
-        to="/home"
+        href="/home"
         aria-label="홈으로 이동"
         onClick={(e) => handleRefreshClick(e, '/home')}
       >
@@ -41,11 +43,11 @@ const Menu = () => {
       {!isInitPath && (
         <div className="flex flex-col gap-6">
           {menuItems.map(({ to, Icon, label }) => (
-            <Link key={to} to={to} onClick={(e) => handleRefreshClick(e, to)}>
+            <Link key={to} href={to} onClick={(e) => handleRefreshClick(e, to)}>
               <MenuItem
                 logo={<Icon className="size-5" />}
                 label={label}
-                isActive={!!matchRoute({ to, fuzzy: true })}
+                isActive={isRouteActive(pathname, to, true)}
               />
             </Link>
           ))}

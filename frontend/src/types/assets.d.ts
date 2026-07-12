@@ -1,14 +1,14 @@
 declare module '*.png' {
-  const source: string;
+  const source: { src: string };
   export default source;
 }
 
 declare module '*.jpeg' {
-  const source: string;
+  const source: { src: string };
   export default source;
 }
 
 declare module '*.jpg' {
-  const source: string;
+  const source: { src: string };
   export default source;
 }

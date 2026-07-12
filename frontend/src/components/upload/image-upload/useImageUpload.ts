@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import * as Sentry from '@sentry/react';
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 
 import { UPLOAD_STATUS, type UploadItem } from '@/components/upload/type';

@@ -1,21 +1,25 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { loginDev } from '@/api/auth/api';
+import { userKeys } from '@/api/users/query';
 import { AuthLogos } from '@/assets';
 import { COOKIE_DOMAIN, IS_PROD } from '@/config/env';
+import { queryClient } from '@/lib/queryClient';
 
 const LoginContainerTemp = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleOnClick = async () => {
     try {
       const { accessToken, refreshToken, expiresIn } = await loginDev();
-      const domain = IS_PROD ? `domain=${COOKIE_DOMAIN}; ` : '';
-      const baseOptions = `path=/; ${domain}Secure; SameSite=None; `;
+      const baseOptions = IS_PROD
+        ? `path=/; domain=${COOKIE_DOMAIN}; Secure; SameSite=None; `
+        : 'path=/; SameSite=Lax; ';
       const REFRESH_EXPIRY = 30 * 24 * 60 * 60;
       document.cookie = `access_token=${accessToken}; max-age=${expiresIn}; ${baseOptions}`;
       document.cookie = `refresh_token=${refreshToken}; max-age=${REFRESH_EXPIRY}; ${baseOptions}`;
-      navigate({ to: '/home' });
+      await queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      router.push('/home');
     } catch {
       toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
     }

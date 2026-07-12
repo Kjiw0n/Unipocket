@@ -10,6 +10,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function isRouteActive(pathname: string, to: string, fuzzy = false) {
+  return pathname === to || (fuzzy && pathname.startsWith(`${to}/`));
+}
+
 // 현재 로컬 시간을 '오전 09:05' 형식으로 반환하는 유틸 함수
 export const getLocalTime = (country: CountryCode) => {
   const region = COUNTRY_TIME_REGION[country] ?? 'DEFAULT';

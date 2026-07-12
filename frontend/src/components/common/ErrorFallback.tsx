@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import * as Sentry from '@sentry/react';
-import { useRouter } from '@tanstack/react-router';
+import * as Sentry from '@sentry/nextjs';
 
 import { HTTP_STATUS } from '@/api/config/constants';
 import { ApiError } from '@/api/config/error';
+import { queryClient } from '@/lib/queryClient';
 
 interface ErrorFallbackProps {
   error: Error;
@@ -16,8 +16,6 @@ export function ErrorFallback({
   reset,
   title = '오류가 발생했습니다',
 }: ErrorFallbackProps) {
-  const router = useRouter();
-
   // 401 에러 발생 시 로그인 페이지로 이동 (useEffect 사용)
   useEffect(() => {
     if (
@@ -46,7 +44,7 @@ export function ErrorFallback({
 
   const handleRetry = () => {
     reset(); // React Query 등의 에러 상태 초기화
-    router.invalidate(); // 라우터 데이터 다시 불러오기
+    void queryClient.invalidateQueries();
   };
 
   return (

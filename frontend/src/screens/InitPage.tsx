@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useRouter } from 'next/navigation';
 
 import { type DateRange } from '@/components/calendar/Calendar';
 import Button from '@/components/common/Button';
@@ -14,7 +14,7 @@ import { formatDateToString } from '@/lib/utils';
 type Step = 'select-country' | 'select-date';
 
 const InitPage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { mutate: createAccountBook, isPending } =
     useCreateAccountBookMutation();
   const [step, setStep] = useState<Step>('select-country');
@@ -59,7 +59,7 @@ const InitPage = () => {
       {
         onSuccess: () => {
           trackEvent('onboarding_complete');
-          navigate({ to: '/home' });
+          router.push('/home');
         },
       },
     );

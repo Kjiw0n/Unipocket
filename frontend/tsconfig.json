@@ -41,10 +41,8 @@
   "include": [
     "src/types/svg.d.ts",
     "src/types/assets.d.ts",
-    "src/types/vite-env.d.ts",
     "next-env.d.ts",
     "next.config.ts",
-    "vite.config.ts",
     "vitest.config.ts",
     "src/app",
     "src",

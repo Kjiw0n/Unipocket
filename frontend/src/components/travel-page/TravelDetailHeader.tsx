@@ -1,4 +1,5 @@
-import { Link, useParams } from '@tanstack/react-router';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 import { useWidgetContext } from '@/components/chart/widget/WidgetContext';
 import Button from '@/components/common/Button';
@@ -15,7 +16,7 @@ import { formatDateStringToDot, formatTripDuration } from '@/lib/utils';
 
 const TravelDetailHeader = () => {
   const { isWidgetEditMode, toggleEditMode } = useWidgetContext();
-  const { travelId } = useParams({ from: '/_app/travel/$travelId' });
+  const { travelId } = useParams<{ travelId: string }>();
   const { data: amountData } = useGetTravelAmountQuery(travelId);
 
   return (
@@ -44,13 +45,13 @@ const TravelDetailHeader = () => {
 export default TravelDetailHeader;
 
 const TripSummary = () => {
-  const { travelId } = useParams({ from: '/_app/travel/$travelId' });
+  const { travelId } = useParams<{ travelId: string }>();
   const { data: travel } = useGetTravelDetailQuery(travelId);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2.5">
-        <Link to="/travel">
+        <Link href="/travel">
           <Icon iconName="ChevronBack" className="text-label-normal size-6" />
         </Link>
         <span className="heading2-bold text-label-normal">

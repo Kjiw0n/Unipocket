@@ -1,9 +1,11 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-export const CDN_URL = import.meta.env.VITE_CDN_URL;
-export const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
-export const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
-export const CONTENTSQUARE_KEY = import.meta.env.VITE_CONTENTSQUARE_KEY;
-export const COOKIE_DOMAIN = import.meta.env.VITE_COOKIE_DOMAIN;
-export const DEV_USER_ID = import.meta.env.VITE_USER_ID;
-export const IS_PROD = import.meta.env.PROD;
-export const APP_ENV = import.meta.env.MODE;
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
+export const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL ?? '';
+export const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN ?? '';
+export const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '';
+export const CONTENTSQUARE_KEY =
+  process.env.NEXT_PUBLIC_CONTENTSQUARE_KEY ?? '';
+export const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_COOKIE_DOMAIN ?? '';
+export const DEV_USER_ID = process.env.NEXT_PUBLIC_DEV_USER_ID ?? '';
+export const IS_PROD = process.env.NODE_ENV === 'production';
+export const APP_ENV = process.env.NODE_ENV;

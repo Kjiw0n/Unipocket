@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import Link from 'next/link';
 
 import FolderCard from '@/components/travel-page/folder/FolderCard';
 import TravelContextMenu from '@/components/travel-page/TravelContextMenu';
@@ -55,9 +55,8 @@ const TravelFolderList = ({
     <div className="bg-background-normal rounded-modal-8 shadow-semantic-subtle flex min-h-0 flex-1 flex-wrap gap-9 overflow-y-auto p-16">
       {travels.map((folder) => (
         <Link
-          to={`/travel/$travelId`}
+          href={`/travel/${folder.travelId}`}
           key={folder.travelId}
-          params={{ travelId: folder.travelId.toString() }}
           className="h-fit"
         >
           <FolderCard

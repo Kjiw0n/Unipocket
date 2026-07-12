@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import Link from 'next/link';
 
 import Button from '@/components/common/Button';
 import {
@@ -47,12 +47,12 @@ const HomeSection = () => {
           교환학생 지출의 모든 것, 통합 가계부 유니포켓
         </h3>
         <div className="flex justify-center gap-2.5 md:justify-start">
-          <Link to="/login">
+          <Link href="/login">
             <Button variant="solid" size="lg">
               로그인
             </Button>
           </Link>
-          <Link to="/" hash="preview">
+          <Link href="/#preview">
             <Button variant="outlined" size="lg">
               서비스 미리보기
             </Button>
@@ -60,7 +60,7 @@ const HomeSection = () => {
         </div>
       </div>
       <img
-        src={LandingImages.HomePreview}
+        src={LandingImages.HomePreview.src}
         alt="Landing Preview"
         className="w-200"
       />
@@ -90,7 +90,7 @@ const FeatureSection = () => {
           }
         >
           <img
-            src={LandingImages.FeaturePreview1}
+            src={LandingImages.FeaturePreview1.src}
             alt="Preview 1"
             className="animate-float absolute right-12.25 bottom-10 w-40 object-contain lg:w-67.5"
           />
@@ -124,7 +124,7 @@ const FeatureSection = () => {
           }
         >
           <img
-            src={LandingImages.FeaturePreview3}
+            src={LandingImages.FeaturePreview3.src}
             alt="Preview 1"
             className="absolute -bottom-35.25 left-50 w-163.5 object-contain lg:h-104"
           />
@@ -141,7 +141,7 @@ const FeatureSection = () => {
           }
         >
           <img
-            src={LandingImages.FeaturePreview4}
+            src={LandingImages.FeaturePreview4.src}
             alt="Preview 1"
             className="animate-float absolute right-12.25 bottom-10 w-30 object-contain lg:w-47.5"
           />
@@ -174,7 +174,7 @@ const PreviewSection = () => {
               <div className="flex flex-col gap-4.5 lg:flex-row">
                 <div className="bg-background-alternative flex items-center justify-center self-start rounded-2xl border border-gray-200 p-2.5">
                   <img
-                    src={LandingImages.DemoReceipt}
+                    src={LandingImages.DemoReceipt.src}
                     className="h-131 rounded-lg object-contain"
                   />
                 </div>
@@ -187,7 +187,7 @@ const PreviewSection = () => {
               <div className="flex flex-col gap-4.5 lg:flex-row">
                 <div className="bg-background-alternative flex items-center justify-center self-start rounded-2xl border border-gray-200 p-2.5">
                   <img
-                    src={LandingImages.DemoBank}
+                    src={LandingImages.DemoBank.src}
                     className="h-131 rounded-lg object-contain"
                   />
                 </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from '@tanstack/react-router';
+import { useParams } from 'next/navigation';
 
 import WidgetList from '@/components/chart/widget/components/WidgetList';
 import WidgetPicker from '@/components/chart/widget/components/WidgetPicker';
@@ -14,7 +14,7 @@ import TravelDetailHeader from '@/components/travel-page/TravelDetailHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const TravelDetailPage = () => {
-  const { travelId } = useParams({ from: '/_app/travel/$travelId' });
+  const { travelId } = useParams<{ travelId: string }>();
   const widgetManager = useTravelWidgetManager(travelId);
   const { isWidgetEditMode } = widgetManager;
 

@@ -1,16 +1,1 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://34.64.82.85.sslip.io/:path*"
-    },
-    {
-      "source": "/cdn-assets/:path*",
-      "destination": "https://storage.googleapis.com/unipocket-cdn-5ba3282c/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
+{ "framework": "nextjs" }
