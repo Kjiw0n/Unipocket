@@ -25,4 +25,4 @@ pnpm lint
 
 ## 환경변수
 
-클라이언트에 노출되는 값은 `NEXT_PUBLIC_` 접두사를 사용합니다. API와 CDN 프록시 대상은 각각 서버 전용 `API_PROXY_TARGET`, `CDN_PROXY_TARGET`으로 설정합니다. 로컬 `.env.*` 파일은 저장소에 포함하지 않습니다.
+클라이언트에 노출되는 값은 `NEXT_PUBLIC_` 접두사를 사용합니다. API와 CDN 프록시 대상은 각각 서버 전용 `API_PROXY_TARGET`, `CDN_PROXY_TARGET`으로 설정합니다. AI 소비 요약 Route Handler는 서버 전용 `GEMINI_API_KEY`를 사용하며, `GEMINI_MODEL`을 생략하면 `gemini-3.1-flash-lite`를 사용합니다. 로컬 `.env.*` 파일은 저장소에 포함하지 않습니다.

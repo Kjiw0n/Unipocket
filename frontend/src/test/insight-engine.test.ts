@@ -10,7 +10,7 @@ import {
 
 describe('Insight Engine', () => {
   it('거래가 5건 미만이면 starter fallback만 반환한다', () => {
-    const insights = runInsightEngine(
+    const { top: insights } = runInsightEngine(
       buildInput({ thisMonthExpenses: [buildNormalizedExpense()] }),
     );
 
@@ -19,7 +19,7 @@ describe('Insight Engine', () => {
   });
 
   it('거래가 5건 이상인데 발동한 룰이 없으면 starter fallback을 반환하지 않는다', () => {
-    const insights = runInsightEngine(
+    const { top: insights } = runInsightEngine(
       buildInput({
         isCurrentMonth: false,
         thisMonthExpenses: Array.from({ length: 5 }, (_, index) =>
@@ -41,7 +41,7 @@ describe('Insight Engine', () => {
   });
 
   it('카테고리가 같은 인사이트는 높은 점수 1개만 남긴다', () => {
-    const insights = runInsightEngine(
+    const { top: insights } = runInsightEngine(
       buildInput({
         analysis: buildAnalysis({
           items: [
@@ -73,7 +73,7 @@ describe('Insight Engine', () => {
   });
 
   it('상위 3개가 전부 경고면 positive 인사이트를 3번째로 섞는다', () => {
-    const insights = runInsightEngine(
+    const { top: insights, fired } = runInsightEngine(
       buildInput({
         analysis: buildAnalysis({
           items: [
@@ -109,6 +109,7 @@ describe('Insight Engine', () => {
     expect(insights.some((insight) => insight.severity === 'positive')).toBe(
       true,
     );
+    expect(fired.length).toBeGreaterThanOrEqual(insights.length);
   });
 
   it('미분류 비중이 30% 이상이면 카테고리 의존 룰 점수가 낮아진다', () => {
@@ -127,7 +128,7 @@ describe('Insight Engine', () => {
           buildNormalizedExpense({ amount: 500, category: 2 }),
         ),
       }),
-    ).find((insight) => insight.ruleId === 'category-overspend');
+    ).fired.find((insight) => insight.ruleId === 'category-overspend');
 
     const noisy = runInsightEngine(
       buildInput({
@@ -149,13 +150,13 @@ describe('Insight Engine', () => {
           ),
         ],
       }),
-    ).find((insight) => insight.ruleId === 'category-overspend');
+    ).fired.find((insight) => insight.ruleId === 'category-overspend');
 
     expect(clean?.score).toBeGreaterThan(noisy?.score ?? 0);
   });
 
   it('raw 지출 의존 룰에는 일부 데이터 기준 설명을 붙인다', () => {
-    const insights = runInsightEngine(
+    const { fired: insights } = runInsightEngine(
       buildInput({
         isPartialExpenseData: true,
         thisMonthExpenses: [
@@ -176,7 +177,7 @@ describe('Insight Engine', () => {
   });
 
   it('analysis 기반 카테고리 과소비에는 일부 데이터 기준 설명을 붙이지 않는다', () => {
-    const insights = runInsightEngine(
+    const { fired: insights } = runInsightEngine(
       buildInput({
         isPartialExpenseData: true,
         analysis: buildAnalysis({

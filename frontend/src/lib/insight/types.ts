@@ -71,3 +71,8 @@ export interface Insight extends InsightCandidate {
   segments: { text: string; emphasis: boolean }[];
   description?: string;
 }
+
+export interface InsightEngineResult {
+  top: Insight[];
+  fired: Insight[];
+}
