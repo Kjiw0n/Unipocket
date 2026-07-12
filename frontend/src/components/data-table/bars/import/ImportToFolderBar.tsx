@@ -1,5 +1,5 @@
-import { useParams } from '@tanstack/react-router';
 import { clsx } from 'clsx';
+import { useParams } from 'next/navigation';
 
 import { useDataTable } from '@/components/data-table/context';
 
@@ -20,9 +20,7 @@ const ImportToFolderBar = ({ onSuccess }: ImportToFolderBarProps) => {
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const { mutate: bulkUpdate } = useBulkUpdateExpensesMutation();
 
-  const { travelId } = useParams({
-    from: '/_app/travel/$travelId',
-  });
+  const { travelId } = useParams<{ travelId: string }>();
 
   if (!tableState.selectionMode) return null;
 

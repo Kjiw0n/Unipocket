@@ -1,4 +1,4 @@
-import { getRouteApi } from '@tanstack/react-router';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import LoginContainer from '@/components/login-page/LoginContainer';
 import LoginContainerTemp from '@/components/login-page/LoginContainerTemp';
@@ -9,21 +9,16 @@ import { API_BASE_URL } from '@/api/config/constants';
 import { Icons } from '@/assets';
 import { LOGIN_MODAL_TEXT } from '@/constants/message';
 
-const routeApi = getRouteApi('/_auth/login');
-
 const LoginPage = () => {
-  const { reason, provider } = routeApi.useSearch();
-
-  const navigate = routeApi.useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const reason = searchParams.get('reason') ?? undefined;
+  const provider = searchParams.get('provider') ?? undefined;
 
   const isModalOpen = reason === 'withdrawn';
 
   const handleModalClose = () => {
-    navigate({
-      to: '.',
-      search: {},
-      replace: true,
-    });
+    router.replace('/login');
   };
 
   const handleModalAction = () => {

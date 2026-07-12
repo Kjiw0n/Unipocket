@@ -4,7 +4,7 @@ import {
   useQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import type { CurrencyType } from '@/types/currency';
@@ -86,7 +86,7 @@ const useAccountBookDetailQuery = (accountBookId: number | null) =>
   useQuery(accountBookDetailQueryOptions(accountBookId));
 
 const useDeleteAccountBookMutation = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const clearAccountBook = useAccountBookStore((s) => s.clearAccountBook);
 
   return useMutation({
@@ -101,13 +101,14 @@ const useDeleteAccountBookMutation = () => {
       const isLastOne = !cached || cached.length <= 1;
 
       if (isLastOne) {
-        void navigate({ to: '/init' }).then(() => {
-          queryClient.removeQueries({ queryKey: accountBookKeys.list() });
-          queryClient.removeQueries({
-            queryKey: accountBookKeys.detail(accountBookId),
-          });
-          clearAccountBook();
+        // Next router.push는 전환 완료 Promise를 반환하지 않으므로,
+        // /init 렌더가 삭제된 가계부 상태를 보지 않도록 먼저 동기 정리한다.
+        queryClient.removeQueries({ queryKey: accountBookKeys.list() });
+        queryClient.removeQueries({
+          queryKey: accountBookKeys.detail(accountBookId),
         });
+        clearAccountBook();
+        router.push('/init');
       } else {
         // 리스트 캐시에서 삭제된 항목을 즉시 제거 (낙관적 업데이트)
         // → resolvedActiveId가 같은 렌더에서 바로 다른 ID로 전환

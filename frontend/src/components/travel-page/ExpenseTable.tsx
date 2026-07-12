@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router';
+import { useParams } from 'next/navigation';
 
 import Button from '@/components/common/Button';
 import UpdateActionBar from '@/components/data-table/bars/update/UpdateActionBar';
@@ -19,9 +19,7 @@ interface ExpenseTableProps {
 }
 
 const ExpenseTable = ({ onOpenBottomSheet }: ExpenseTableProps) => {
-  const { travelId: travelIdParam } = useParams({
-    from: '/_app/travel/$travelId',
-  });
+  const { travelId: travelIdParam } = useParams<{ travelId?: string }>();
   const travelId = Number(travelIdParam);
 
   const { data, filter, updateFilter, totalPages } = useFilteredExpenses({

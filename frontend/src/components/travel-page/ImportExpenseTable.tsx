@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router';
+import { useParams } from 'next/navigation';
 
 import ImportToFolderBar from '@/components/data-table/bars/import/ImportToFolderBar';
 import { expenseColumns } from '@/components/data-table/columns/expenseColumns';
@@ -15,7 +15,7 @@ interface ImportExpenseTableProps {
 }
 
 const ImportExpenseTable = ({ onClose }: ImportExpenseTableProps) => {
-  const { travelId } = useParams({ from: '/_app/travel/$travelId' });
+  const { travelId } = useParams<{ travelId: string }>();
   const { data: travel } = useGetTravelDetailQuery(travelId);
 
   // 1. 문자열을 Date 객체로 변환

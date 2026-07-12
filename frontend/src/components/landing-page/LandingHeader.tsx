@@ -1,18 +1,25 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation } from '@tanstack/react-router';
 import clsx from 'clsx';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { Icons } from '@/assets';
 import ProfileImage from '@/assets/images/profile.png';
 
 const LandingHeader = () => {
-  const { hash, pathname } = useLocation();
+  const pathname = usePathname();
 
   const isLoginPath = pathname.includes('/login');
 
-  const [activeSection, setActiveSection] = useState(
-    hash.replace('#', '') || 'home',
-  );
+  const [activeSection, setActiveSection] = useState('home');
+
+  useEffect(() => {
+    const updateHash = () =>
+      setActiveSection(window.location.hash.slice(1) || 'home');
+    updateHash();
+    window.addEventListener('hashchange', updateHash);
+    return () => window.removeEventListener('hashchange', updateHash);
+  }, []);
   const [isManualClick, setIsManualClick] = useState(false);
 
   const navItems = useMemo(
@@ -71,7 +78,7 @@ const LandingHeader = () => {
   return (
     <nav className="border-fill-normal bg-background-alternative z-header sticky top-0 hidden items-center justify-between border-b px-8 py-3 md:flex">
       {/* 로고 영역 */}
-      <Link to="/" hash="home">
+      <Link href="/#home">
         <Icons.LogoText className="h-8 w-25" />
       </Link>
 
@@ -82,8 +89,7 @@ const LandingHeader = () => {
             {navItems.map((item) => (
               <Link
                 key={item.id}
-                to="/"
-                hash={item.id}
+                href={`/#${item.id}`}
                 className={clsx(
                   'transition-all duration-300',
                   activeSection !== item.id && 'text-label-alternative',
@@ -96,9 +102,9 @@ const LandingHeader = () => {
           </div>
 
           {/* 프로필 영역 */}
-          <Link to="/login">
+          <Link href="/login">
             <img
-              src={ProfileImage}
+              src={ProfileImage.src}
               alt="프로필"
               className="h-8 w-8 rounded-full object-cover"
             />

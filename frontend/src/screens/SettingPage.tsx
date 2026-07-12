@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router';
+import { useRouter } from 'next/navigation';
 
 import Icon from '@/components/common/Icon';
 import { QueryBoundary } from '@/components/common/QueryBoundary';
@@ -36,7 +36,7 @@ const SettingPage = () => {
       <div className="flex items-center gap-2.5">
         <Icon
           iconName="ChevronBack"
-          onClick={() => router.history.back()}
+          onClick={() => router.back()}
           color="text-label-normal"
         />
         <h1 className="title2-semibold text-label-normal">설정</h1>

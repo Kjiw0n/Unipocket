@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
-import { useMatchRoute } from '@tanstack/react-router';
 import { clsx } from 'clsx';
+import { usePathname } from 'next/navigation';
 
 import Calendar, { type DateRange } from '@/components/calendar/Calendar';
 import Modal, { type ModalProps } from '@/components/modal/Modal';
 import { ModalContext } from '@/components/modal/useModalContext';
 
-import { formatDateWithDay } from '@/lib/utils';
+import { formatDateWithDay, isRouteActive } from '@/lib/utils';
 
 interface DatePickItemProps {
   label: string;
@@ -52,8 +52,8 @@ export const SelectDateContent = ({
   onChange,
 }: SelectDateContentProps) => {
   const context = useContext(ModalContext);
-  const matchRoute = useMatchRoute();
-  const isTravelRoute = !!matchRoute({ to: '/travel', fuzzy: true });
+  const pathname = usePathname();
+  const isTravelRoute = isRouteActive(pathname, '/travel', true);
   const title = isTravelRoute ? '여행 기간 설정' : '가계부 기간 설정';
   const description = isTravelRoute
     ? '여행 기간을 설정해주세요.\n여행 기간 동안의 지출 내역을 기록할 수 있어요.'
