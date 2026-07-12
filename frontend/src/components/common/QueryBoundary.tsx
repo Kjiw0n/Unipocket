@@ -1,6 +1,6 @@
 import { type ReactNode, Suspense } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
-import * as Sentry from '@sentry/react';
+import * as Sentry from '@sentry/nextjs';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 
 import { HTTP_STATUS } from '@/api/config/constants';

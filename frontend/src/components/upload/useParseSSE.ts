@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import * as Sentry from '@sentry/react';
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useShallow } from 'zustand/react/shallow';
 
