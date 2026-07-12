@@ -1,73 +1,28 @@
-# React + TypeScript + Vite
+# UniPocket Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Next.js 16 App Router 기반 프런트엔드입니다. 모든 화면은 클라이언트 컴포넌트로 유지하며, API와 CDN 요청은 `next.config.ts`의 rewrite를 통해 전달합니다.
 
-Currently, two official plugins are available:
+## 개발
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+`frontend/`에서 실행합니다.
 
-## React Compiler
-
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+pnpm dev        # http://localhost:5173
+pnpm build      # Next.js 프로덕션 빌드
+pnpm start      # 프로덕션 서버
+pnpm typecheck
+pnpm test -- --run
+pnpm lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 구조
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+- `src/app/`: App Router 페이지·레이아웃·프로바이더
+- `src/screens/`: 페이지가 렌더하는 화면 컴포넌트
+- `src/api/`: API 함수와 TanStack Query 훅
+- `src/components/`: 도메인·공통 UI
+- `src/config/env.ts`: 클라이언트 환경변수 접근 단일 지점
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+## 환경변수
+
+클라이언트에 노출되는 값은 `NEXT_PUBLIC_` 접두사를 사용합니다. API와 CDN 프록시 대상은 각각 서버 전용 `API_PROXY_TARGET`, `CDN_PROXY_TARGET`으로 설정합니다. 로컬 `.env.*` 파일은 저장소에 포함하지 않습니다.
