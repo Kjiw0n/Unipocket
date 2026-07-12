@@ -48,6 +48,5 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          NEXT_PUBLIC_CDN_URL: ${{ secrets.NEXT_PUBLIC_CDN_URL }}
           API_PROXY_TARGET: ${{ secrets.API_PROXY_TARGET }}
           CDN_PROXY_TARGET: ${{ secrets.CDN_PROXY_TARGET }}

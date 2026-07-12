@@ -1,4 +1,3 @@
-import { CDN_URL } from '@/config/env';
 import { COUNTRY_CODE, type CountryCode } from '@/data/country/countryCode';
 import countryData from '@/data/country/countryData.json';
 import { COUNTRY_LOCALE_MAP } from '@/data/country/countryLocale';
@@ -21,7 +20,7 @@ export const getCountryInfo = (code: CountryCode): CountryInfo | null => {
   return {
     code,
     ...data,
-    imageUrl: `${CDN_URL}${data.imageUrl}`,
+    imageUrl: `/cdn-assets${data.imageUrl}`,
   };
 };
 
