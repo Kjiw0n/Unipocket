@@ -1,5 +1,4 @@
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
-export const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL ?? '';
 export const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN ?? '';
 export const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '';
