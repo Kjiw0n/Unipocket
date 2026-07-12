@@ -8,6 +8,8 @@ import type { GetAnalysisResponse } from '@/api/account-books/type';
 import { useGetExpensesQuery } from '@/api/expenses/query';
 import { useInsightSummaryQuery } from '@/api/insights/query';
 import { useWidgetQuery } from '@/api/widget/query';
+import { COUNTRY_TIME_REGION, TIME_REGION_CONFIG } from '@/constants/time';
+import type { CountryCode } from '@/data/country/countryCode';
 import { formatAmountByCountry, getCountryInfo } from '@/lib/country';
 import { runInsightEngine } from '@/lib/insight/engine';
 import {
@@ -22,6 +24,7 @@ import {
   buildInsightSummaryFacts,
   hasMeaningfulInsights,
 } from '@/lib/insight/summary';
+import { compareYearMonth, getCurrentYearMonth } from '@/lib/insight/time';
 import {
   useAccountBookCountryCode,
   useRequiredAccountBook,
@@ -122,7 +125,23 @@ const ReportInsight = ({
   );
   const summaryEnabled =
     !isPlaceholderData && hasMeaningfulInsights(insightResult.fired);
-  const summaryQuery = useInsightSummaryQuery(summaryRequest, summaryEnabled);
+  const isPastMonth = useMemo(() => {
+    const timeRegion = accountBook.localCountryCode
+      ? COUNTRY_TIME_REGION[accountBook.localCountryCode as CountryCode]
+      : undefined;
+    const timeZone = TIME_REGION_CONFIG[timeRegion ?? 'DEFAULT'].timeZone;
+    return (
+      compareYearMonth(
+        { year, month },
+        getCurrentYearMonth(new Date(), timeZone),
+      ) < 0
+    );
+  }, [accountBook.localCountryCode, year, month]);
+  const summaryQuery = useInsightSummaryQuery(
+    summaryRequest,
+    summaryEnabled,
+    isPastMonth,
+  );
 
   if (isPlaceholderData) {
     return <ReportInsightSkeleton />;

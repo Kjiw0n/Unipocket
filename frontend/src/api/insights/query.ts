@@ -10,6 +10,7 @@ export const insightSummaryKeys = {
     year,
     month,
     currencyType,
+    facts,
   }: GetInsightSummaryRequest) =>
     [
       ...insightSummaryKeys.all,
@@ -17,23 +18,20 @@ export const insightSummaryKeys = {
       year,
       month,
       currencyType,
+      facts,
     ] as const,
 };
 
 export const useInsightSummaryQuery = (
   request: GetInsightSummaryRequest,
   enabled: boolean,
+  isPastMonth: boolean,
 ) =>
   useQuery({
     queryKey: insightSummaryKeys.detail(request),
     queryFn: () => getInsightSummary(request),
     enabled,
-    staleTime:
-      request.year < new Date().getFullYear() ||
-      (request.year === new Date().getFullYear() &&
-        request.month < new Date().getMonth() + 1)
-        ? Infinity
-        : 0,
+    staleTime: isPastMonth ? Infinity : 0,
     meta: {
       suppressErrorToast: true,
     },

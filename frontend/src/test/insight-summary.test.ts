@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import { buildSummaryPrompt } from '@/app/api/insights/summary/gemini';
 import {
-  getCurrentYearMonth,
   hasMeaningfulFacts,
   parseInsightSummaryRequest,
 } from '@/app/api/insights/summary/validation';
@@ -10,6 +9,7 @@ import {
   buildInsightSummaryFacts,
   hasMeaningfulInsights,
 } from '@/lib/insight/summary';
+import { getCurrentYearMonth } from '@/lib/insight/time';
 import type { Insight } from '@/lib/insight/types';
 
 const buildInsight = (overrides: Partial<Insight> = {}): Insight => ({

@@ -109,23 +109,3 @@ export const parseInsightSummaryRequest = (
 
 export const hasMeaningfulFacts = (facts: InsightSummaryFact[]): boolean =>
   facts.some((fact) => !FALLBACK_RULE_IDS.has(fact.ruleId));
-
-export const getCurrentYearMonth = (
-  date = new Date(),
-  timeZone = 'Asia/Seoul',
-) => {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    year: 'numeric',
-    month: 'numeric',
-  }).formatToParts(date);
-  return {
-    year: Number(parts.find((part) => part.type === 'year')?.value),
-    month: Number(parts.find((part) => part.type === 'month')?.value),
-  };
-};
-
-export const compareYearMonth = (
-  left: Pick<GetInsightSummaryRequest, 'year' | 'month'>,
-  right: Pick<GetInsightSummaryRequest, 'year' | 'month'>,
-) => left.year * 12 + left.month - (right.year * 12 + right.month);

@@ -3,15 +3,11 @@ import { NextResponse } from 'next/server';
 import type { GetInsightSummaryResponse } from '@/api/insights/type';
 import { COUNTRY_TIME_REGION, TIME_REGION_CONFIG } from '@/constants/time';
 import type { CountryCode } from '@/data/country/countryCode';
+import { compareYearMonth, getCurrentYearMonth } from '@/lib/insight/time';
 
 import { getCurrentInsightSummary, getPastInsightSummary } from './cache';
 import { GeminiRequestError } from './gemini';
-import {
-  compareYearMonth,
-  getCurrentYearMonth,
-  hasMeaningfulFacts,
-  parseInsightSummaryRequest,
-} from './validation';
+import { hasMeaningfulFacts, parseInsightSummaryRequest } from './validation';
 
 const omittedSummary = (): GetInsightSummaryResponse => ({
   summary: null,
