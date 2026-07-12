@@ -4,6 +4,7 @@ import { renderInsightTemplate } from './templates';
 import type {
   Insight,
   InsightCandidate,
+  InsightEngineResult,
   InsightInput,
   InsightRule,
   InsightSeverity,
@@ -127,11 +128,12 @@ const attachTemplate = (
   };
 };
 
-export const runInsightEngine = (input: InsightInput): Insight[] => {
+export const runInsightEngine = (input: InsightInput): InsightEngineResult => {
   const total = sum(input.thisMonthExpenses.map((expense) => expense.amount));
   if (input.thisMonthExpenses.length < 5 || total <= 0) {
     const fallback = FALLBACK_RULE?.evaluate(input);
-    return fallback ? [attachTemplate(fallback, input)] : [];
+    const fired = fallback ? [attachTemplate(fallback, input)] : [];
+    return { top: fired, fired };
   }
 
   const insights = INSIGHT_RULES.filter(
@@ -145,8 +147,9 @@ export const runInsightEngine = (input: InsightInput): Insight[] => {
 
   const ranked = applyPositiveMix(suppressDuplicateCategory(insights));
   if (ranked.length === 0) {
-    return [attachTemplate(NO_INSIGHT_FALLBACK, input)];
+    const fired = [attachTemplate(NO_INSIGHT_FALLBACK, input)];
+    return { top: fired, fired };
   }
 
-  return ranked.slice(0, 3);
+  return { top: ranked.slice(0, 3), fired: insights };
 };

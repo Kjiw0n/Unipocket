@@ -4,6 +4,11 @@ const ReportInsightSkeleton = () => {
   return (
     <div className="w-full min-w-283">
       <ReportContainer title="AI 소비 인사이트">
+        <div className="flex flex-col gap-2 px-2.5 py-2">
+          <div className="bg-fill-strong rounded-modal-4 h-4 w-24 animate-pulse" />
+          <div className="bg-fill-normal rounded-modal-4 h-4 w-full animate-pulse" />
+          <div className="bg-fill-normal rounded-modal-4 h-4 w-4/5 animate-pulse" />
+        </div>
         <div className="flex gap-3.5">
           {Array.from({ length: 3 }).map((_, index) => (
             <div
