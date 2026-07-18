@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev -p 5173",
     "test": "vitest",
+    "test:e2e": "playwright install chromium && playwright test",
     "build": "next build",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
@@ -45,6 +46,7 @@
     "@eslint/js": "^9.39.1",
     "@fontsource/pretendard": "^5.2.5",
     "@next/eslint-plugin-next": "16.2.10",
+    "@playwright/test": "^1.61.1",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^24.10.1",

@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from 'node:url';
 
 import { loadEnv } from 'vite';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig(() => {
   const env = loadEnv('development', process.cwd(), '');
@@ -11,6 +11,7 @@ export default defineConfig(() => {
       globals: true,
       environment: 'node',
       env,
+      exclude: [...configDefaults.exclude, 'e2e/**'],
       alias: [
         {
           find: '@',
