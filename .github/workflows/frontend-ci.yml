@@ -5,10 +5,12 @@ on:
     branches: [main, develop]
     paths:
       - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
   push:
     branches: [main, develop]
     paths:
       - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
 
 jobs:
   frontend:
@@ -36,6 +38,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
 
       - name: Run tests
         run: pnpm exec vitest --run
