@@ -82,6 +82,7 @@ pnpm format       # Prettier 포맷
 | `NEXT_PUBLIC_DEV_USER_ID` | 게스트 로그인 사용자 ID |
 | `SENTRY_AUTH_TOKEN` | Sentry 소스맵 업로드 토큰 (프로덕션 빌드 전용) |
 | `SENTRY_ORG` / `SENTRY_PROJECT` | Sentry 프로젝트 식별자 |
+| `SHARE_LINK_SECRET` | 리포트 공유 링크 HMAC 서명용 서버 전용 시크릿 |
 
 로컬 개발·배포 환경 모두 `/api/*`, `/cdn-assets/*` 요청은 `next.config.ts` rewrite를 통해 전달된다.
 

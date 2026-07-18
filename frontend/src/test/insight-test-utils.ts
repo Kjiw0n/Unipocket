@@ -48,6 +48,36 @@ export const buildAnalysis = ({
   },
 });
 
+const buildDeterministicText = (seed: number, length: number): string => {
+  const alphabet =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+  let state = seed;
+  let result = '';
+  for (let index = 0; index < length; index += 1) {
+    state = (state * 1_664_525 + 1_013_904_223) >>> 0;
+    result += alphabet[state >>> 26];
+  }
+  return result;
+};
+
+export const buildOversizedAnalysis = (): GetAnalysisResponse => {
+  const analysis = buildAnalysis();
+  const buildItems = (seedOffset: number) =>
+    Array.from({ length: 120 }, (_, index) => ({
+      date: `2026-07-${String((index % 31) + 1).padStart(2, '0')}`,
+      cumulatedAmount: buildDeterministicText(seedOffset + index + 1, 100),
+    }));
+
+  return {
+    ...analysis,
+    compareWithLastMonth: {
+      ...analysis.compareWithLastMonth,
+      thisMonthItem: buildItems(0),
+      prevMonthItem: buildItems(1_000),
+    },
+  };
+};
+
 export const buildNormalizedExpense = (
   overrides: Partial<NormalizedExpense> = {},
 ): NormalizedExpense => ({

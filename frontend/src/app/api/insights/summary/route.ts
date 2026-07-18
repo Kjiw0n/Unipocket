@@ -5,6 +5,7 @@ import { COUNTRY_TIME_REGION, TIME_REGION_CONFIG } from '@/constants/time';
 import type { CountryCode } from '@/data/country/countryCode';
 import { compareYearMonth, getCurrentYearMonth } from '@/lib/insight/time';
 
+import { verifyAccountBookAccess } from '../../account-book-access';
 import { getCurrentInsightSummary, getPastInsightSummary } from './cache';
 import { GeminiRequestError } from './gemini';
 import { hasMeaningfulFacts, parseInsightSummaryRequest } from './validation';
@@ -14,95 +15,6 @@ const omittedSummary = (): GetInsightSummaryResponse => ({
   generatedAt: null,
   cached: false,
 });
-
-type AccessVerification =
-  | { ok: true; localCountryCode: string | null }
-  | { ok: false; response: Response };
-
-const verifyAccountBookAccess = async (
-  request: Request,
-  accountBookId: number,
-): Promise<AccessVerification> => {
-  const cookie = request.headers.get('cookie');
-  if (!cookie) {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        { message: '로그인이 필요합니다.' },
-        { status: 401 },
-      ),
-    };
-  }
-
-  const backendUrl = process.env.API_PROXY_TARGET?.replace(/\/$/, '');
-  if (!backendUrl) {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        { message: '서버 설정을 확인해주세요.' },
-        { status: 500 },
-      ),
-    };
-  }
-
-  let response: Response;
-  try {
-    response = await fetch(
-      `${backendUrl}/account-books/${accountBookId}/amount`,
-      {
-        headers: { cookie },
-        cache: 'no-store',
-        signal: AbortSignal.timeout(5_000),
-      },
-    );
-  } catch {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        { message: '가계부 접근 권한을 확인하지 못했습니다.' },
-        { status: 502 },
-      ),
-    };
-  }
-
-  if (response.ok) {
-    const data = (await response.json().catch(() => null)) as {
-      localCountryCode?: unknown;
-    } | null;
-    return {
-      ok: true,
-      localCountryCode:
-        typeof data?.localCountryCode === 'string'
-          ? data.localCountryCode
-          : null,
-    };
-  }
-  if (response.status === 401) {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        { message: '로그인이 필요합니다.' },
-        { status: 401 },
-      ),
-    };
-  }
-  if (response.status === 403 || response.status === 404) {
-    return {
-      ok: false,
-      response: NextResponse.json(
-        { message: '가계부에 접근할 권한이 없습니다.' },
-        { status: 403 },
-      ),
-    };
-  }
-  return {
-    ok: false,
-    response: NextResponse.json(
-      { message: '가계부 접근 권한을 확인하지 못했습니다.' },
-      { status: 502 },
-    ),
-  };
-};
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);

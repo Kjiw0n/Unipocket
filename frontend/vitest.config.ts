@@ -14,6 +14,12 @@ export default defineConfig(() => {
       exclude: [...configDefaults.exclude, 'e2e/**'],
       alias: [
         {
+          find: 'server-only',
+          replacement: fileURLToPath(
+            new URL('./node_modules/server-only/empty.js', import.meta.url),
+          ),
+        },
+        {
           find: '@',
           replacement: fileURLToPath(new URL('./src', import.meta.url)),
         },
