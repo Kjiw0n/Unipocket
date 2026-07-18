@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '@/app/api/share/report/route';
 import { verifyReportShareToken } from '@/lib/share/token';
 
-import { buildAnalysis } from './insight-test-utils';
+import { buildAnalysis, buildOversizedAnalysis } from './insight-test-utils';
 
 const buildBody = () => ({
   accountBookId: 5,
@@ -120,6 +120,21 @@ describe('POST /api/share/report', () => {
     expect(response.status).toBe(502);
     expect(await response.json()).toEqual({
       message: '리포트 데이터 형식이 올바르지 않습니다.',
+    });
+  });
+
+  it('생성 토큰이 길이 상한을 넘으면 발급을 거부한다', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(
+        jsonResponse({ localCountryCode: 'DE', baseCountryCode: 'KR' }),
+      )
+      .mockResolvedValueOnce(jsonResponse(buildOversizedAnalysis()));
+
+    const response = await POST(buildRequest());
+
+    expect(response.status).toBe(422);
+    expect(await response.json()).toEqual({
+      message: '리포트 데이터가 공유 링크 허용 크기를 초과했습니다.',
     });
   });
 });

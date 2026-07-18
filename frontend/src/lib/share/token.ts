@@ -11,6 +11,13 @@ import { signReportSharePayload, verifyReportShareSignature } from './sign';
 export const REPORT_SHARE_TOKEN_MAX_LENGTH = 8_192;
 export const REPORT_SHARE_TTL_MS = 90 * 24 * 60 * 60 * 1_000;
 
+export class ReportShareTokenTooLongError extends Error {
+  constructor() {
+    super('Report share token exceeds maximum length');
+    this.name = 'ReportShareTokenTooLongError';
+  }
+}
+
 export type ReportShareTokenVerification =
   | { status: 'valid'; payload: ReportSharePayload }
   | { status: 'expired' }
@@ -21,7 +28,11 @@ export const createReportShareToken = async (
 ): Promise<string> => {
   const encodedPayload = encodeReportSharePayload(payload);
   const signature = await signReportSharePayload(encodedPayload);
-  return `${encodedPayload}.${signature}`;
+  const token = `${encodedPayload}.${signature}`;
+  if (token.length > REPORT_SHARE_TOKEN_MAX_LENGTH) {
+    throw new ReportShareTokenTooLongError();
+  }
+  return token;
 };
 
 export const verifyReportShareToken = async (

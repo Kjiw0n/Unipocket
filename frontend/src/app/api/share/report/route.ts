@@ -1,13 +1,22 @@
 import { NextResponse } from 'next/server';
 
 import { parseReportSharePayload } from '@/lib/share/codec';
-import { createReportShareToken } from '@/lib/share/token';
+import {
+  createReportShareToken,
+  ReportShareTokenTooLongError,
+} from '@/lib/share/token';
 
 import { verifyAccountBookAccess } from '../../account-book-access';
 import { parseShareReportRequest } from './validation';
 
 const serverConfigurationError = () =>
   NextResponse.json({ message: '서버 설정을 확인해주세요.' }, { status: 500 });
+
+const reportTooLargeError = () =>
+  NextResponse.json(
+    { message: '리포트 데이터가 공유 링크 허용 크기를 초과했습니다.' },
+    { status: 422 },
+  );
 
 const analysisRequestError = (status: number) => {
   if (status === 401) {
@@ -86,7 +95,10 @@ export async function POST(request: Request) {
   try {
     const token = await createReportShareToken(payload);
     return NextResponse.json({ url: `/share?d=${token}` });
-  } catch {
+  } catch (error) {
+    if (error instanceof ReportShareTokenTooLongError) {
+      return reportTooLargeError();
+    }
     return serverConfigurationError();
   }
 }

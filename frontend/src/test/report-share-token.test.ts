@@ -12,10 +12,11 @@ import {
   createReportShareToken,
   REPORT_SHARE_TOKEN_MAX_LENGTH,
   REPORT_SHARE_TTL_MS,
+  ReportShareTokenTooLongError,
   verifyReportShareToken,
 } from '@/lib/share/token';
 
-import { buildAnalysis } from './insight-test-utils';
+import { buildAnalysis, buildOversizedAnalysis } from './insight-test-utils';
 
 const NOW = new Date('2026-07-18T00:00:00.000Z');
 
@@ -84,6 +85,20 @@ describe('Report share token', () => {
         NOW,
       ),
     ).resolves.toEqual({ status: 'invalid' });
+  });
+
+  it('생성 결과가 길이 상한을 초과하면 토큰을 반환하지 않는다', async () => {
+    const payload = parseReportSharePayload(
+      buildPayload({ analysis: buildOversizedAnalysis() }),
+    );
+
+    expect(payload).not.toBeNull();
+    if (!payload) {
+      throw new Error('Expected a valid oversized report share payload');
+    }
+    await expect(createReportShareToken(payload)).rejects.toBeInstanceOf(
+      ReportShareTokenTooLongError,
+    );
   });
 
   it('점으로 정확히 두 조각이 아닌 토큰을 거부한다', async () => {
