@@ -8,14 +8,15 @@ import type {
   AnalysisChartItem,
   GetAnalysisResponse,
 } from '@/api/account-books/type';
+import { type CountryCode, isCountryCode } from '@/data/country/countryCode';
 
 export interface ReportSharePayload {
   v: 1;
   year: number;
   month: number;
   currencyType: CurrencyType;
-  localCountryCode: string;
-  baseCountryCode: string;
+  localCountryCode: CountryCode;
+  baseCountryCode: CountryCode;
   issuedAt: string;
   analysis: GetAnalysisResponse;
 }
@@ -159,6 +160,12 @@ export const parseReportSharePayload = (
 ): ReportSharePayload | null => {
   if (!isRecord(value)) return null;
   const analysis = parseAnalysis(value.analysis);
+  const localCountryCode = isCountryCode(value.localCountryCode)
+    ? value.localCountryCode
+    : null;
+  const baseCountryCode = isCountryCode(value.baseCountryCode)
+    ? value.baseCountryCode
+    : null;
   if (
     value.v !== 1 ||
     !Number.isInteger(value.year) ||
@@ -168,10 +175,8 @@ export const parseReportSharePayload = (
     Number(value.month) < 1 ||
     Number(value.month) > 12 ||
     (value.currencyType !== 'BASE' && value.currencyType !== 'LOCAL') ||
-    !isBoundedString(value.localCountryCode, 2) ||
-    !COUNTRY_CODE_PATTERN.test(value.localCountryCode) ||
-    !isBoundedString(value.baseCountryCode, 2) ||
-    !COUNTRY_CODE_PATTERN.test(value.baseCountryCode) ||
+    !localCountryCode ||
+    !baseCountryCode ||
     !isBoundedString(value.issuedAt, 40) ||
     !analysis
   ) {
@@ -183,8 +188,8 @@ export const parseReportSharePayload = (
     year: Number(value.year),
     month: Number(value.month),
     currencyType: value.currencyType,
-    localCountryCode: value.localCountryCode,
-    baseCountryCode: value.baseCountryCode,
+    localCountryCode,
+    baseCountryCode,
     issuedAt: value.issuedAt,
     analysis,
   };

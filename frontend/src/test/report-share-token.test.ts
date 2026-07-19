@@ -170,4 +170,13 @@ describe('Report share token', () => {
     expect(parsed).not.toHaveProperty('merchantName');
     expect(parsed?.analysis).not.toHaveProperty('expenseRecords');
   });
+
+  it('프론트엔드에서 지원하지 않는 국가코드를 거부한다', () => {
+    expect(
+      parseReportSharePayload({ ...buildPayload(), localCountryCode: 'ZZ' }),
+    ).toBeNull();
+    expect(
+      parseReportSharePayload({ ...buildPayload(), baseCountryCode: 'ZZ' }),
+    ).toBeNull();
+  });
 });

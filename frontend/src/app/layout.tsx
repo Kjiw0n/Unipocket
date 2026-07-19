@@ -1,11 +1,9 @@
 import '@/styles/index.css';
 
 import type { Metadata } from 'next';
-import Script from 'next/script';
 
+import { AnalyticsScripts } from './analytics-scripts';
 import { Providers } from './providers';
-
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
   title: 'Unipocket',
@@ -21,20 +19,7 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Providers>{children}</Providers>
-        {GA_MEASUREMENT_ID && (
-          <>
-            <Script id="ga-init" strategy="afterInteractive">
-              {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });`}
-            </Script>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-              strategy="lazyOnload"
-            />
-          </>
-        )}
+        <AnalyticsScripts />
       </body>
     </html>
   );

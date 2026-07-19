@@ -4,9 +4,9 @@ import ComparisonCard from '@/components/chart/comparison/ComparisonCard';
 import ReportContainer from '@/components/report-page/layout/ReportContainer';
 import ReportContent from '@/components/report-page/layout/ReportContent';
 import { useReportContext } from '@/components/report-page/ReportContext';
+import { useReportDataContext } from '@/components/report-page/ReportDataContext';
 
 import { formatAmountByCountry, getCountryInfo } from '@/lib/country';
-import { useRequiredAccountBook } from '@/stores/accountBookStore';
 
 const barWidth = {
   large: 'w-48',
@@ -25,7 +25,7 @@ interface ReportMonthlyProps {
 
 const ReportMonthly = ({ data }: ReportMonthlyProps) => {
   const { currencyType } = useReportContext();
-  const { localCountryCode, baseCountryCode } = useRequiredAccountBook();
+  const { localCountryCode, baseCountryCode } = useReportDataContext();
 
   // 단위는 currencyType이 바뀔 때만 변경
   const displayCountryCode = useMemo(

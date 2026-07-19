@@ -7,7 +7,9 @@ import PageHeader from '@/components/layout/PageHeader';
 import ReportInsight from '@/components/report-page/insight/ReportInsight';
 import ReportInsightSkeleton from '@/components/report-page/insight/ReportInsightSkeleton';
 import ReportControlSection from '@/components/report-page/ReportControlSection';
+import { ReportDataContext } from '@/components/report-page/ReportDataContext';
 import ReportSection from '@/components/report-page/ReportSection';
+import ReportShareButton from '@/components/report-page/ReportShareButton';
 
 import {
   canGoToMonth,
@@ -23,7 +25,8 @@ import { useRequiredAccountBook } from '@/stores/accountBookStore';
 const ReportPage = () => {
   const [currencyType, setCurrencyType] = useState<CurrencyType>('BASE');
 
-  const accountBookId = useRequiredAccountBook().accountBookId;
+  const { accountBookId, localCountryCode, baseCountryCode } =
+    useRequiredAccountBook();
 
   const now = new Date();
   const [selectedDate, setSelectedDate] = useState(now);
@@ -66,17 +69,27 @@ const ReportPage = () => {
         style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
         className="flex flex-col gap-4.5"
       >
-        <ReportControlSection
-          year={year}
-          month={month}
-          canGoPrev={canGoPrev}
-          canGoNext={canGoNext}
-          onMonthChange={handleMonthChange}
-          currencyType={currencyType}
-          onCurrencyChange={(checked) =>
-            setCurrencyType(checked ? 'LOCAL' : 'BASE')
-          }
-        />
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <ReportControlSection
+              year={year}
+              month={month}
+              canGoPrev={canGoPrev}
+              canGoNext={canGoNext}
+              onMonthChange={handleMonthChange}
+              currencyType={currencyType}
+              onCurrencyChange={(checked) =>
+                setCurrencyType(checked ? 'LOCAL' : 'BASE')
+              }
+            />
+          </div>
+          <ReportShareButton
+            accountBookId={accountBookId}
+            year={year}
+            month={month}
+            currencyType={currencyType}
+          />
+        </div>
 
         {data && (
           <>
@@ -95,14 +108,18 @@ const ReportPage = () => {
               />
             </QueryBoundary>
 
-            <ReportSection
-              key={`${year}-${month}-${currencyType}`}
-              data={data}
-              currencyType={currencyType}
-              onCurrencyTypeChange={setCurrencyType}
-              isCurrentMonth={isCurrentMonth}
-              isPlaceholderData={isPlaceholderData}
-            />
+            <ReportDataContext.Provider
+              value={{ localCountryCode, baseCountryCode }}
+            >
+              <ReportSection
+                key={`${year}-${month}-${currencyType}`}
+                data={data}
+                currencyType={currencyType}
+                onCurrencyTypeChange={setCurrencyType}
+                isCurrentMonth={isCurrentMonth}
+                isPlaceholderData={isPlaceholderData}
+              />
+            </ReportDataContext.Provider>
           </>
         )}
       </div>

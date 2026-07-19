@@ -1,12 +1,12 @@
 import ReportContainer from '@/components/report-page/layout/ReportContainer';
 import ReportContent from '@/components/report-page/layout/ReportContent';
+import { useReportDataContext } from '@/components/report-page/ReportDataContext';
 import ReportLegend from '@/components/report-page/ReportLegend';
 import VerticalGrid from '@/components/report-page/VerticalGrid';
 
 import { CATEGORIES, type CategoryId } from '@/types/category';
 
 import { getCountryInfo } from '@/lib/country';
-import { useRequiredAccountBook } from '@/stores/accountBookStore';
 
 const SKELETON_STEPS = 6;
 const SKELETON_MAX = 150;
@@ -27,7 +27,7 @@ interface ReportCategorySkeletonProps {
 }
 
 const ReportCategorySkeleton = ({ reason }: ReportCategorySkeletonProps) => {
-  const { localCountryCode } = useRequiredAccountBook();
+  const { localCountryCode } = useReportDataContext();
   const countryName = getCountryInfo(localCountryCode)?.countryName ?? '';
 
   return (

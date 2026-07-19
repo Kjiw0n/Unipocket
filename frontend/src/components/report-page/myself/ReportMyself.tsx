@@ -6,11 +6,10 @@ import ReportContainer from '@/components/report-page/layout/ReportContainer';
 import ReportContent from '@/components/report-page/layout/ReportContent';
 import ReportLineGraph from '@/components/report-page/myself/ReportLineGraph';
 import { useReportContext } from '@/components/report-page/ReportContext';
+import { useReportDataContext } from '@/components/report-page/ReportDataContext';
 
 import { type AnalysisChartItem } from '@/api/account-books/type';
 import { formatAmountByCountry, getCountryInfo } from '@/lib/country';
-import { useAccountBookCountryCode } from '@/stores/accountBookStore';
-import { useRequiredAccountBook } from '@/stores/accountBookStore';
 
 interface ReportMyselfProps {
   isCurrentMonth: boolean;
@@ -33,12 +32,11 @@ interface ReportMyselfProps {
 
 const ReportMyself = ({ data, isCurrentMonth }: ReportMyselfProps) => {
   const { currencyType } = useReportContext();
-  const { baseCountryCode } = useRequiredAccountBook();
-  const countryCode = useAccountBookCountryCode(currencyType);
+  const { localCountryCode, baseCountryCode } = useReportDataContext();
   // 단위는 currencyType이 바뀔 때만 변경
   const displayCountryCode = useMemo(
-    () => (currencyType === 'LOCAL' ? countryCode : baseCountryCode),
-    [currencyType, countryCode, baseCountryCode],
+    () => (currencyType === 'LOCAL' ? localCountryCode : baseCountryCode),
+    [currencyType, localCountryCode, baseCountryCode],
   );
   const unit = useMemo(
     () => getCountryInfo(displayCountryCode)?.currencyUnitKor || '',
