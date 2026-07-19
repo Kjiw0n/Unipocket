@@ -60,3 +60,6 @@ export const COUNTRY_CODE = {
 } as const;
 
 export type CountryCode = keyof typeof COUNTRY_CODE;
+
+export const isCountryCode = (value: unknown): value is CountryCode =>
+  typeof value === 'string' && Object.hasOwn(COUNTRY_CODE, value);

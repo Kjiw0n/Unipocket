@@ -1,7 +1,9 @@
 import { CATEGORIES } from '@/types/category';
 
+import { COUNTRY_TIME_REGION, TIME_REGION_CONFIG } from '@/constants/time';
 import type { CountryCode } from '@/data/country/countryCode';
 import { formatAmountByCountry, getCountryInfo } from '@/lib/country';
+import { getCurrentYearMonth } from '@/lib/insight/time';
 import type { ReportSharePayload } from '@/lib/share/codec';
 
 export interface ReportShareMetadataContent {
@@ -13,24 +15,27 @@ export const isCurrentMonthAtIssue = (
   issuedAt: string,
   year: number,
   month: number,
+  localCountryCode: CountryCode,
 ): boolean => {
   const issuedDate = new Date(issuedAt);
+  if (!Number.isFinite(issuedDate.getTime())) return false;
 
-  return (
-    Number.isFinite(issuedDate.getTime()) &&
-    issuedDate.getUTCFullYear() === year &&
-    issuedDate.getUTCMonth() + 1 === month
+  const timeRegion = COUNTRY_TIME_REGION[localCountryCode] ?? 'DEFAULT';
+  const issuedYearMonth = getCurrentYearMonth(
+    issuedDate,
+    TIME_REGION_CONFIG[timeRegion].timeZone,
   );
+
+  return issuedYearMonth.year === year && issuedYearMonth.month === month;
 };
 
 export const buildReportShareMetadataContent = (
   payload: ReportSharePayload,
 ): ReportShareMetadataContent => {
-  const countryCode = (
+  const countryCode =
     payload.currencyType === 'LOCAL'
       ? payload.localCountryCode
-      : payload.baseCountryCode
-  ) as CountryCode;
+      : payload.baseCountryCode;
   const countryInfo = getCountryInfo(countryCode);
   const totalSpent = Number(
     payload.analysis.compareWithLastMonth.totalSpent.thisMonthToDate,

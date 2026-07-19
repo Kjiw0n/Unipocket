@@ -3,7 +3,6 @@
 import { ReportDataContext } from '@/components/report-page/ReportDataContext';
 import ReportSection from '@/components/report-page/ReportSection';
 
-import type { CountryCode } from '@/data/country/countryCode';
 import type { ReportSharePayload } from '@/lib/share/codec';
 import { isCurrentMonthAtIssue } from '@/lib/share/presentation';
 
@@ -18,13 +17,14 @@ const ShareReportView = ({ payload }: ShareReportViewProps) => {
     payload.issuedAt,
     payload.year,
     payload.month,
+    payload.localCountryCode,
   );
 
   return (
     <ReportDataContext.Provider
       value={{
-        localCountryCode: payload.localCountryCode as CountryCode,
-        baseCountryCode: payload.baseCountryCode as CountryCode,
+        localCountryCode: payload.localCountryCode,
+        baseCountryCode: payload.baseCountryCode,
       }}
     >
       <ReportSection
