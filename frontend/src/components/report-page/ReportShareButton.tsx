@@ -8,6 +8,7 @@ import type { CurrencyType } from '@/types/currency';
 import { useCreateReportShareMutation } from '@/api/share/query';
 import { trackEvent } from '@/lib/analytics';
 import { copyTextToClipboard } from '@/lib/clipboard';
+import { resolveReportShareUrl } from '@/lib/share/url';
 
 interface ReportShareButtonProps {
   accountBookId: number;
@@ -30,7 +31,9 @@ const ReportShareButton = ({
       {
         onSuccess: async ({ url }) => {
           try {
-            await copyTextToClipboard(`${window.location.origin}${url}`);
+            await copyTextToClipboard(
+              resolveReportShareUrl(url, window.location.origin),
+            );
             trackEvent('share_report_create');
             toast.success('링크가 복사되었어요');
           } catch {

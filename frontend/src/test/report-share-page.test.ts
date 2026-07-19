@@ -9,6 +9,7 @@ import {
   buildReportShareMetadataContent,
   isCurrentMonthAtIssue,
 } from '@/lib/share/presentation';
+import { resolveReportShareUrl } from '@/lib/share/url';
 
 import { buildAnalysis } from './insight-test-utils';
 
@@ -47,14 +48,29 @@ describe('Report share presentation', () => {
     vi.unstubAllEnvs();
   });
 
-  it('발급 시각의 UTC 연월과 리포트 연월이 같으면 현재 월로 판정한다', () => {
-    expect(isCurrentMonthAtIssue('2026-07-31T23:59:59.000Z', 2026, 7)).toBe(
-      true,
-    );
-    expect(isCurrentMonthAtIssue('2026-08-01T00:00:00.000Z', 2026, 7)).toBe(
-      false,
-    );
-    expect(isCurrentMonthAtIssue('invalid-date', 2026, 7)).toBe(false);
+  it('발급 시각을 가계부 국가 시간대의 연월로 판정한다', () => {
+    expect(
+      isCurrentMonthAtIssue('2026-07-31T15:30:00.000Z', 2026, 8, 'KR'),
+    ).toBe(true);
+    expect(
+      isCurrentMonthAtIssue('2026-08-01T00:30:00.000Z', 2026, 7, 'US'),
+    ).toBe(true);
+    expect(isCurrentMonthAtIssue('invalid-date', 2026, 7, 'KR')).toBe(false);
+  });
+
+  it('상대·절대 공유 URL을 정상적인 절대 URL로 해석한다', () => {
+    expect(
+      resolveReportShareUrl('/share?d=token', 'https://unipocket.example'),
+    ).toBe('https://unipocket.example/share?d=token');
+    expect(
+      resolveReportShareUrl('share?d=token', 'https://unipocket.example'),
+    ).toBe('https://unipocket.example/share?d=token');
+    expect(
+      resolveReportShareUrl(
+        'https://share.example/share?d=token',
+        'https://unipocket.example',
+      ),
+    ).toBe('https://share.example/share?d=token');
   });
 
   it('총지출과 수입을 제외한 최다 지출 카테고리로 메타데이터를 만든다', () => {
