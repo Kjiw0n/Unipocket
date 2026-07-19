@@ -9,6 +9,7 @@ import ReportInsightSkeleton from '@/components/report-page/insight/ReportInsigh
 import ReportControlSection from '@/components/report-page/ReportControlSection';
 import { ReportDataContext } from '@/components/report-page/ReportDataContext';
 import ReportSection from '@/components/report-page/ReportSection';
+import ReportShareButton from '@/components/report-page/ReportShareButton';
 
 import {
   canGoToMonth,
@@ -68,17 +69,27 @@ const ReportPage = () => {
         style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
         className="flex flex-col gap-4.5"
       >
-        <ReportControlSection
-          year={year}
-          month={month}
-          canGoPrev={canGoPrev}
-          canGoNext={canGoNext}
-          onMonthChange={handleMonthChange}
-          currencyType={currencyType}
-          onCurrencyChange={(checked) =>
-            setCurrencyType(checked ? 'LOCAL' : 'BASE')
-          }
-        />
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <ReportControlSection
+              year={year}
+              month={month}
+              canGoPrev={canGoPrev}
+              canGoNext={canGoNext}
+              onMonthChange={handleMonthChange}
+              currencyType={currencyType}
+              onCurrencyChange={(checked) =>
+                setCurrencyType(checked ? 'LOCAL' : 'BASE')
+              }
+            />
+          </div>
+          <ReportShareButton
+            accountBookId={accountBookId}
+            year={year}
+            month={month}
+            currencyType={currencyType}
+          />
+        </div>
 
         {data && (
           <>

@@ -109,4 +109,7 @@ export const ENDPOINTS = {
       `account-books/${accountBookId}/amount`, // 가계부 금액 요약 조회 (GET)
     EXCHANGE_RATE: 'exchange-rate', // 환율 조회 (GET)
   },
+  SHARE: {
+    REPORT: 'share/report', // 리포트 공유 링크 발급 (POST)
+  },
 } as const;
