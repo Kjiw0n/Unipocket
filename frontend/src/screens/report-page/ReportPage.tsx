@@ -7,6 +7,7 @@ import PageHeader from '@/components/layout/PageHeader';
 import ReportInsight from '@/components/report-page/insight/ReportInsight';
 import ReportInsightSkeleton from '@/components/report-page/insight/ReportInsightSkeleton';
 import ReportControlSection from '@/components/report-page/ReportControlSection';
+import { ReportDataContext } from '@/components/report-page/ReportDataContext';
 import ReportSection from '@/components/report-page/ReportSection';
 
 import {
@@ -23,7 +24,8 @@ import { useRequiredAccountBook } from '@/stores/accountBookStore';
 const ReportPage = () => {
   const [currencyType, setCurrencyType] = useState<CurrencyType>('BASE');
 
-  const accountBookId = useRequiredAccountBook().accountBookId;
+  const { accountBookId, localCountryCode, baseCountryCode } =
+    useRequiredAccountBook();
 
   const now = new Date();
   const [selectedDate, setSelectedDate] = useState(now);
@@ -95,14 +97,18 @@ const ReportPage = () => {
               />
             </QueryBoundary>
 
-            <ReportSection
-              key={`${year}-${month}-${currencyType}`}
-              data={data}
-              currencyType={currencyType}
-              onCurrencyTypeChange={setCurrencyType}
-              isCurrentMonth={isCurrentMonth}
-              isPlaceholderData={isPlaceholderData}
-            />
+            <ReportDataContext.Provider
+              value={{ localCountryCode, baseCountryCode }}
+            >
+              <ReportSection
+                key={`${year}-${month}-${currencyType}`}
+                data={data}
+                currencyType={currencyType}
+                onCurrencyTypeChange={setCurrencyType}
+                isCurrentMonth={isCurrentMonth}
+                isPlaceholderData={isPlaceholderData}
+              />
+            </ReportDataContext.Provider>
           </>
         )}
       </div>

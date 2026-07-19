@@ -1,15 +1,15 @@
 import ReportContainer from '@/components/report-page/layout/ReportContainer';
 import ReportContent from '@/components/report-page/layout/ReportContent';
+import { useReportDataContext } from '@/components/report-page/ReportDataContext';
 
 import { getCountryInfo } from '@/lib/country';
-import { useRequiredAccountBook } from '@/stores/accountBookStore';
 
 interface ReportMonthlySkeletonProps {
   reason: 'me' | 'other';
 }
 
 const ReportMonthlySkeleton = ({ reason }: ReportMonthlySkeletonProps) => {
-  const { localCountryCode } = useRequiredAccountBook();
+  const { localCountryCode } = useReportDataContext();
   const localCountryName = getCountryInfo(localCountryCode)?.countryName ?? '';
 
   return (
