@@ -48,7 +48,9 @@ export const buildReportShareMetadataContent = (
     : formattedTotal;
 
   const topCategory = payload.analysis.compareByCategory.items
-    .filter((item) => item.categoryIndex !== 9)
+    .filter(
+      (item) => item.categoryIndex !== 9 && Number(item.mySpentAmount) > 0,
+    )
     .reduce<
       (typeof payload.analysis.compareByCategory.items)[number] | null
     >((top, item) => (!top || Number(item.mySpentAmount) > Number(top.mySpentAmount) ? item : top), null);

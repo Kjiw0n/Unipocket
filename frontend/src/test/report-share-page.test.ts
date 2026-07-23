@@ -81,6 +81,21 @@ describe('Report share presentation', () => {
     });
   });
 
+  it('지출 카테고리가 모두 0원이면 최다 카테고리 문장을 생략한다', () => {
+    const payload = buildPayload();
+    payload.analysis.compareWithLastMonth.totalSpent.thisMonthToDate = '0';
+    payload.analysis.compareByCategory.items =
+      payload.analysis.compareByCategory.items.map((item) => ({
+        ...item,
+        mySpentAmount: '0',
+      }));
+
+    expect(buildReportShareMetadataContent(payload)).toEqual({
+      title: '7월 지출 리포트',
+      description: '2026년 7월 총지출은 0원이에요.',
+    });
+  });
+
   it('SITE_URL이 없거나 잘못된 개발 환경에서는 localhost를 사용한다', () => {
     expect(resolveReportShareMetadataBase(undefined, 'development')?.href).toBe(
       'http://localhost:5173/',
