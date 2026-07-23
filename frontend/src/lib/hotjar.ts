@@ -3,6 +3,7 @@ import { isAnalyticsExcludedPath } from '@/lib/analytics';
 
 const CONTENTSQUARE_SCRIPT_ID = 'contentsquare-uxa-script';
 
+// 예약 시점부터 load 콜백 종료까지 유지해 중복 로드 예약을 막는다.
 let isLoadScheduled = false;
 
 export function initHotjar() {
