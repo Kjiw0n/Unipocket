@@ -1,19 +1,41 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 
 import { GA_MEASUREMENT_ID } from '@/config/env';
-import { isAnalyticsExcludedPath } from '@/lib/analytics';
+import { isAnalyticsExcludedPath, trackPageView } from '@/lib/analytics';
 
 export function AnalyticsScripts() {
   const pathname = usePathname();
+  const isExcluded = isAnalyticsExcludedPath(pathname);
+  const [isGaReady, setIsGaReady] = useState(false);
+  const lastTrackedPathnameRef = useRef<string | null>(null);
 
-  if (!GA_MEASUREMENT_ID || isAnalyticsExcludedPath(pathname)) return null;
+  useEffect(() => {
+    if (!GA_MEASUREMENT_ID) return;
+
+    if (isExcluded) {
+      lastTrackedPathnameRef.current = null;
+      return;
+    }
+
+    if (!isGaReady || lastTrackedPathnameRef.current === pathname) return;
+
+    trackPageView(pathname);
+    lastTrackedPathnameRef.current = pathname;
+  }, [isExcluded, isGaReady, pathname]);
+
+  if (!GA_MEASUREMENT_ID || isExcluded) return null;
 
   return (
     <>
-      <Script id="ga-init" strategy="afterInteractive">
+      <Script
+        id="ga-init"
+        strategy="afterInteractive"
+        onReady={() => setIsGaReady(true)}
+      >
         {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
