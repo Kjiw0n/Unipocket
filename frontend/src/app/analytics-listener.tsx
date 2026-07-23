@@ -15,10 +15,5 @@ export function AnalyticsListener() {
     initHotjar();
   }, [isExcluded]);
 
-  useEffect(() => {
-    if (isExcluded) return;
-    window.gtag?.('event', 'page_view', { page_path: pathname });
-  }, [isExcluded, pathname]);
-
   return null;
 }
