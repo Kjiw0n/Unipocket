@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   copyReportShareLink,
   createAndCopyReportShareLink,
+  runReportShareRequestOnce,
 } from '@/lib/share/flow';
 
 const createCopyCallbacks = () => ({
@@ -24,6 +25,25 @@ const createDeferred = <T>() => {
 };
 
 describe('report share flow', () => {
+  it('같은 tick의 공유 요청은 한 번만 실행하고 완료 뒤 잠금을 해제한다', async () => {
+    const pending = { current: false };
+    const request = createDeferred<void>();
+    const run = vi.fn(() => request.promise);
+
+    const first = runReportShareRequestOnce({ pending, run });
+    const second = runReportShareRequestOnce({ pending, run });
+
+    expect(run).toHaveBeenCalledOnce();
+    expect(pending.current).toBe(true);
+
+    request.resolve();
+    await Promise.all([first, second]);
+
+    expect(pending.current).toBe(false);
+    await runReportShareRequestOnce({ pending, run });
+    expect(run).toHaveBeenCalledTimes(2);
+  });
+
   it('발급 실패는 URL 해석·복사·성공 또는 폴백 처리를 실행하지 않는다', async () => {
     const callbacks = createCopyCallbacks();
     const createShare = vi.fn().mockRejectedValue(new Error('request failed'));

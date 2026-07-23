@@ -19,6 +19,25 @@ interface CreateAndCopyReportShareLinkOptions extends Omit<
   onCopyFailure: (url: string) => void;
 }
 
+interface RunReportShareRequestOnceOptions {
+  pending: { current: boolean };
+  run: () => Promise<void>;
+}
+
+export const runReportShareRequestOnce = async ({
+  pending,
+  run,
+}: RunReportShareRequestOnceOptions): Promise<void> => {
+  if (pending.current) return;
+
+  pending.current = true;
+  try {
+    await run();
+  } finally {
+    pending.current = false;
+  }
+};
+
 export const copyReportShareLink = async ({
   url,
   copyText,

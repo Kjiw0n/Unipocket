@@ -13,6 +13,7 @@ import { copyTextToClipboard } from '@/lib/clipboard';
 import {
   copyReportShareLink,
   createAndCopyReportShareLink,
+  runReportShareRequestOnce,
 } from '@/lib/share/flow';
 import { resolveReportShareUrl } from '@/lib/share/url';
 
@@ -48,6 +49,7 @@ const ReportShareButton = ({
   const activeAttemptRef = useRef<ShareAttempt | null>(null);
   const completedAttemptRef = useRef<ShareAttempt | null>(null);
   const fallbackCopyPendingRef = useRef<ShareAttempt | null>(null);
+  const shareRequestPendingRef = useRef(false);
   const currentSelectionKeyRef = useRef(selectionKey);
 
   if (previousSelectionKey !== selectionKey) {
@@ -87,30 +89,41 @@ const ReportShareButton = ({
   };
 
   const handleShare = () => {
-    const attempt: ShareAttempt = {
-      id: attemptSequenceRef.current + 1,
-      selectionKey,
-    };
-    attemptSequenceRef.current = attempt.id;
-    activeAttemptRef.current = attempt;
-    completedAttemptRef.current = null;
-    fallbackCopyPendingRef.current = null;
-    setFallbackLink(null);
+    void runReportShareRequestOnce({
+      pending: shareRequestPendingRef,
+      run: async () => {
+        const attempt: ShareAttempt = {
+          id: attemptSequenceRef.current + 1,
+          selectionKey,
+        };
+        attemptSequenceRef.current = attempt.id;
+        activeAttemptRef.current = attempt;
+        completedAttemptRef.current = null;
+        fallbackCopyPendingRef.current = null;
+        setFallbackLink(null);
 
-    void createAndCopyReportShareLink({
-      createShare: () =>
-        createShare.mutateAsync({ accountBookId, year, month, currencyType }),
-      resolveUrl: (url) => resolveReportShareUrl(url, window.location.origin),
-      copyText: copyTextToClipboard,
-      isCurrent: () => isCurrentAttempt(attempt),
-      onUrlResolutionFailure: () =>
-        toast.error('공유 링크를 확인하지 못했어요. 다시 시도해주세요.'),
-      onCopySuccess: () => completeCopy(attempt),
-      onCopyFailure: (url) => {
-        setFallbackLink({ url, attempt });
-        toast.error('자동 복사가 제한되어 링크를 직접 복사해주세요.');
+        await createAndCopyReportShareLink({
+          createShare: () =>
+            createShare.mutateAsync({
+              accountBookId,
+              year,
+              month,
+              currencyType,
+            }),
+          resolveUrl: (url) =>
+            resolveReportShareUrl(url, window.location.origin),
+          copyText: copyTextToClipboard,
+          isCurrent: () => isCurrentAttempt(attempt),
+          onUrlResolutionFailure: () =>
+            toast.error('공유 링크를 확인하지 못했어요. 다시 시도해주세요.'),
+          onCopySuccess: () => completeCopy(attempt),
+          onCopyFailure: (url) => {
+            setFallbackLink({ url, attempt });
+            toast.error('자동 복사가 제한되어 링크를 직접 복사해주세요.');
+          },
+          trackCopySuccess: () => trackEvent('share_report_create'),
+        });
       },
-      trackCopySuccess: () => trackEvent('share_report_create'),
     });
   };
 
